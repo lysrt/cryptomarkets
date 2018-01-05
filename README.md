@@ -6,6 +6,12 @@ Go client library for interacting with multiple Cryptocurrency exchange market A
 
 This is still under development
 
+Installation
+
+```
+go get -u github.com/lysrt/cryptomarkets
+```
+
 Usage
 
 ``` go
