@@ -2,11 +2,16 @@ package quoinex
 
 import (
 	"encoding/json"
-	"io/ioutil"
-	"net/http"
+	"errors"
+	"time"
+
+	"github.com/lysrt/cryptomarkets/common"
+
+	"github.com/lysrt/cryptomarkets/currency"
+	"github.com/lysrt/cryptomarkets/ticker"
 )
 
-type ticker struct {
+type quoinexTicker struct {
 	ID                 string      `json:"id"`
 	ProductType        string      `json:"product_type"`
 	MarketAsk          float64     `json:"market_ask"`
@@ -22,25 +27,23 @@ type ticker struct {
 	BaseCurrency       string      `json:"base_currency"`
 }
 
-func (e *Quoinex) LastPrice(from, to string) float64 {
+func (e *Quoinex) Ticker(from, to string) (*ticker.Ticker, error) {
+	currencyPair := currency.Pair{
+		First:  currency.New(from),
+		Second: currency.New(to),
+	}
+
 	url := "https://api.quoine.com/products"
 
-	resp, err := http.Get(url)
+	body, err := common.RunRequest(url)
 	if err != nil {
-		panic(err)
-	}
-	defer resp.Body.Close()
-
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		panic(err)
+		return nil, err
 	}
 
-	var tickers []ticker
+	var tickers []quoinexTicker
 	err = json.Unmarshal(body, &tickers)
-	// err = json.NewDecoder(resp.Body).Decode(&tickers)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 
 	id := ""
@@ -51,32 +54,44 @@ func (e *Quoinex) LastPrice(from, to string) float64 {
 		}
 	}
 	if id == "" {
-		return -1
+		return nil, errors.New("did not find currency pair")
 	}
 
 	// ---------------------
 	url = "https://api.quoine.com/products/" + id
 
-	resp, err = http.Get(url)
+	body, err = common.RunRequest(url)
 	if err != nil {
-		panic(err)
-	}
-	defer resp.Body.Close()
-
-	body, err = ioutil.ReadAll(resp.Body)
-	if err != nil {
-		panic(err)
+		return nil, err
 	}
 
-	var ticker ticker
-	err = json.Unmarshal(body, &ticker)
+	var t quoinexTicker
+	err = json.Unmarshal(body, &t)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 
-	result, err := ticker.LastTradedPrice.Float64()
+	last, err := t.LastTradedPrice.Float64()
+	quantity, err := t.LastTradedQuantity.Float64()
+	high, err := t.HighMarketAsk.Float64()
+	low, err := t.LowMarketBid.Float64()
+	volume, err := t.Volume24h.Float64()
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
-	return result
+
+	return &ticker.Ticker{
+		Timestamp:    time.Now().Unix(),
+		LastPrice:    last,
+		LastQuantity: quantity,
+		High:         high,
+		Low:          low,
+		Open:         0,
+		Close:        0,
+		Bid:          t.MarketBid,
+		Ask:          t.MarketAsk,
+		VWAP:         0,
+		Volume:       volume,
+		Pair:         currencyPair,
+	}, nil
 }

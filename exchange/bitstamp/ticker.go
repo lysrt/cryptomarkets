@@ -3,14 +3,16 @@ package bitstamp
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
-	"net/http"
+
+	"github.com/lysrt/cryptomarkets/common"
+	"github.com/lysrt/cryptomarkets/currency"
+	"github.com/lysrt/cryptomarkets/ticker"
 )
 
-type ticker struct {
+type bitstampTicker struct {
 	High      float64 `json:"high,string"`
 	Last      float64 `json:"last,string"`
-	Timestamp int     `json:"timestamp,string"`
+	Timestamp int64   `json:"timestamp,string"`
 	Bid       float64 `json:"bid,string"`
 	VWAP      float64 `json:"vwap,string"`
 	Volume    float64 `json:"volume,string"`
@@ -32,29 +34,40 @@ type ticker struct {
 
 // https://www.bitstamp.net/api/v2/ticker_hour/{currency_pair}/
 
-func (e *Bitstamp) LastPrice(from, to string) float64 {
-	// https://www.bitstamp.net/api/v2/ticker/{currency_pair}/
-	url := "https://www.bitstamp.net/api/v2/ticker/btcusd/"
-	resp, err := http.Get(url)
-	if err != nil {
-		panic(err)
+func (e *Bitstamp) Ticker(from, to string) (*ticker.Ticker, error) {
+	currencyPair := currency.Pair{
+		First:  currency.New(from),
+		Second: currency.New(to),
 	}
-	defer resp.Body.Close()
 
-	body, err := ioutil.ReadAll(resp.Body)
+	url := fmt.Sprintf("https://www.bitstamp.net/api/v2/ticker/%s/", currencyPair.Lower(""))
+
+	body, err := common.RunRequest(url)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
+
 	fmt.Println(string(body))
 
-	var ticker ticker
+	var t bitstampTicker
 
-	err = json.Unmarshal(body, &ticker)
-	// err = json.NewDecoder(resp.Body).Decode(&ticker)
+	err = json.Unmarshal(body, &t)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 
-	// return btcusd by default
-	return ticker.Last
+	return &ticker.Ticker{
+		Timestamp:    t.Timestamp,
+		LastPrice:    t.Last,
+		LastQuantity: 0,
+		High:         t.High,
+		Low:          t.Low,
+		Open:         t.Open,
+		Close:        0,
+		Bid:          t.Bid,
+		Ask:          t.Ask,
+		VWAP:         t.VWAP,
+		Volume:       t.Volume,
+		Pair:         currencyPair,
+	}, nil
 }
