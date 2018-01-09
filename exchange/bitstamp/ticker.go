@@ -5,8 +5,7 @@ import (
 	"fmt"
 
 	"github.com/lysrt/cryptomarkets/common"
-	"github.com/lysrt/cryptomarkets/currency"
-	"github.com/lysrt/cryptomarkets/ticker"
+	"github.com/lysrt/cryptomarkets/entity"
 )
 
 type bitstampTicker struct {
@@ -34,20 +33,18 @@ type bitstampTicker struct {
 
 // https://www.bitstamp.net/api/v2/ticker_hour/{currency_pair}/
 
-func (e *Bitstamp) Ticker(from, to string) (*ticker.Ticker, error) {
-	currencyPair := currency.Pair{
-		First:  currency.New(from),
-		Second: currency.New(to),
+func (e *Bitstamp) GetTicker(from, to string) (*entity.Ticker, error) {
+	currencyPair := entity.Pair{
+		First:  entity.NewCurrency(from),
+		Second: entity.NewCurrency(to),
 	}
 
 	url := fmt.Sprintf("https://www.bitstamp.net/api/v2/ticker/%s/", currencyPair.Lower(""))
 
 	body, err := common.RunRequest(url)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("bad HTTP response: %q", err.Error())
 	}
-
-	fmt.Println(string(body))
 
 	var t bitstampTicker
 
@@ -56,7 +53,7 @@ func (e *Bitstamp) Ticker(from, to string) (*ticker.Ticker, error) {
 		return nil, err
 	}
 
-	return &ticker.Ticker{
+	return &entity.Ticker{
 		Timestamp:    t.Timestamp,
 		LastPrice:    t.Last,
 		LastQuantity: 0,

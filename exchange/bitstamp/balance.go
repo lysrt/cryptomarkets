@@ -2,7 +2,11 @@ package bitstamp
 
 import (
 	"encoding/json"
+	"fmt"
+	"io/ioutil"
 	"net/http"
+
+	"github.com/lysrt/cryptomarkets/entity"
 )
 
 type balance struct {
@@ -46,7 +50,7 @@ type balance struct {
 
 var urlString = "https://www.bitstamp.net/api/v2/balance/"
 
-func (e *Bitstamp) GetBalance(currency string) float64 {
+func (e *Bitstamp) GetBalance() (*entity.Balance, error) {
 	// if cached, return cache[currency]
 
 	resp, err := http.PostForm(urlString, e.getAuthValues())
@@ -55,12 +59,30 @@ func (e *Bitstamp) GetBalance(currency string) float64 {
 	}
 	defer resp.Body.Close()
 
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		panic(err)
+	}
+
+	if resp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("bad http request: %s. %s", resp.Status, string(body))
+	}
+
 	var b balance
-	err = json.NewDecoder(resp.Body).Decode(&b)
+	err = json.Unmarshal(body, &b)
+	// err = json.NewDecoder(resp.Body).Decode(&b)
 	if err != nil {
 		panic(err)
 	}
 
 	// BTC by default
-	return b.BtcBalance
+	balances := entity.Balance{
+		"BTC": b.BtcAvailable,
+		"ETH": b.EthAvailable,
+		"USD": b.UsdAvailable,
+		"LTC": b.LtcAvailable,
+		"XRP": b.XrpAvailable,
+	}
+
+	return &balances, nil
 }

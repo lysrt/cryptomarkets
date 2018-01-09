@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+
+	"github.com/lysrt/cryptomarkets/entity"
 )
 
 type balance struct {
@@ -12,7 +14,7 @@ type balance struct {
 	Balance  json.Number `json:"balance"`
 }
 
-func (e *Quoinex) GetBalance(currency string) float64 {
+func (e *Quoinex) GetBalance() (*entity.Balance, error) {
 	url := "https://api.quoine.com"
 	path := "/accounts/balance"
 	// path := "/crypto_accounts" // More details
@@ -34,24 +36,27 @@ func (e *Quoinex) GetBalance(currency string) float64 {
 	}
 	defer resp.Body.Close()
 
-	// fmt.Println(resp)
-	// for k, v := range resp.Header {
-	// 	fmt.Println(k, v)
-	// }
-
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		panic(err)
 	}
 
-	// fmt.Println("Body:", string(body))
+	if resp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("bad http request: %s. %s", resp.Status, string(body))
+	}
 
 	var balances []balance
 
 	json.Unmarshal(body, &balances)
+
+	bmap := make(entity.Balance)
 	for _, b := range balances {
-		fmt.Println(b.Currency, b.Balance)
+		v, err := b.Balance.Float64()
+		if err != nil {
+			continue
+		}
+		bmap[entity.NewCurrency(b.Currency)] = v
 	}
 
-	return 0.0
+	return &bmap, nil
 }

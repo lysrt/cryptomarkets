@@ -6,9 +6,7 @@ import (
 	"time"
 
 	"github.com/lysrt/cryptomarkets/common"
-
-	"github.com/lysrt/cryptomarkets/currency"
-	"github.com/lysrt/cryptomarkets/ticker"
+	"github.com/lysrt/cryptomarkets/entity"
 )
 
 type quoinexTicker struct {
@@ -27,10 +25,10 @@ type quoinexTicker struct {
 	BaseCurrency       string      `json:"base_currency"`
 }
 
-func (e *Quoinex) Ticker(from, to string) (*ticker.Ticker, error) {
-	currencyPair := currency.Pair{
-		First:  currency.New(from),
-		Second: currency.New(to),
+func (e *Quoinex) GetTicker(from, to string) (*entity.Ticker, error) {
+	currencyPair := entity.Pair{
+		First:  entity.NewCurrency(from),
+		Second: entity.NewCurrency(to),
 	}
 
 	url := "https://api.quoine.com/products"
@@ -48,7 +46,7 @@ func (e *Quoinex) Ticker(from, to string) (*ticker.Ticker, error) {
 
 	id := ""
 	for _, t := range tickers {
-		if t.CurrencyPairCode == "BTCUSD" {
+		if t.CurrencyPairCode == currencyPair.Upper("") {
 			id = t.ID
 			break
 		}
@@ -80,7 +78,7 @@ func (e *Quoinex) Ticker(from, to string) (*ticker.Ticker, error) {
 		return nil, err
 	}
 
-	return &ticker.Ticker{
+	return &entity.Ticker{
 		Timestamp:    time.Now().Unix(),
 		LastPrice:    last,
 		LastQuantity: quantity,
