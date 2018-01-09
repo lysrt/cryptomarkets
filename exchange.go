@@ -1,10 +1,12 @@
 package cryptomarkets
 
+import "github.com/lysrt/cryptomarkets/entity"
+
 type Exchange interface {
-	LastPrice(from, to string) float64
-	GetBalance(currency string) float64
-	// BitcoinDepositAddress() string
-	// BitcoinWithdrawal(destination, value string) string
+	GetTicker(from, to string) (*entity.Ticker, error)
+	GetBalance() (*entity.Balance, error)
+	// DepositAddress(currency string) (string, error)
+	// Withdrawal(currency, destination string, value float64) error
 }
 
 type ExchangeConfig struct {

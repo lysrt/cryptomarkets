@@ -4,14 +4,14 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/lysrt/cryptomarkets/ticker"
+	"github.com/lysrt/cryptomarkets/entity"
 
 	"github.com/lysrt/cryptomarkets/exchange/bitstamp"
 	"github.com/lysrt/cryptomarkets/exchange/quoinex"
 )
 
 type pricer interface {
-	Ticker(from, to string) (*ticker.Ticker, error)
+	GetTicker(from, to string) (*entity.Ticker, error)
 }
 
 func main() {
@@ -20,12 +20,12 @@ func main() {
 		"quoinex":  &quoinex.Quoinex{},
 	}
 
-	bp, err := providers["bitstamp"].Ticker("BTC", "USD")
+	bp, err := providers["bitstamp"].GetTicker("BTC", "USD")
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	qp, err := providers["quoinex"].Ticker("BTC", "USD")
+	qp, err := providers["quoinex"].GetTicker("BTC", "USD")
 	if err != nil {
 		log.Fatal(err)
 	}
