@@ -1,4 +1,4 @@
-package bitstamp
+package bittrex
 
 import (
 	"crypto/hmac"
@@ -10,6 +10,7 @@ import (
 	"time"
 )
 
+// TODO Is it correct?
 func (e *Bittrex) getAuthValues() url.Values {
 	nonce := strconv.FormatInt(time.Now().Unix(), 10)
 
