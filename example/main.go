@@ -9,6 +9,7 @@ import (
 	"github.com/lysrt/cryptomarkets/exchange/bitstamp"
 	"github.com/lysrt/cryptomarkets/exchange/bittrex"
 	"github.com/lysrt/cryptomarkets/exchange/gdax"
+	"github.com/lysrt/cryptomarkets/exchange/okcoin"
 	"github.com/lysrt/cryptomarkets/exchange/quoinex"
 )
 
@@ -23,6 +24,7 @@ func main() {
 		"bittrex":  &bittrex.Bittrex{},
 		"binance":  &binance.Binance{},
 		"gdax":     &gdax.Gdax{},
+		"okcoin":   &okcoin.Okcoin{},
 	}
 
 	bp, err := providers["bitstamp"].GetTicker("BTC", "USD")
@@ -50,9 +52,15 @@ func main() {
 		log.Fatal(err)
 	}
 
+	ok, err := providers["okcoin"].GetTicker("BTC", "USD")
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	fmt.Println("Bitstamp:", bp.LastPrice)
 	fmt.Println("Quoinex: ", qp.LastPrice)
 	fmt.Println("Binance: ", bip.LastPrice)
 	fmt.Println("Bittrex: ", btp.LastPrice)
 	fmt.Println("GDAX:    ", gp.LastPrice)
+	fmt.Println("OKcoin:  ", ok.LastPrice)
 }
