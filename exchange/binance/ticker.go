@@ -42,7 +42,7 @@ func (e *Binance) GetTicker(from, to string) (*entity.Ticker, error) {
 
 	url := fmt.Sprintf("https://api.binance.com/api/v1/ticker/24hr?symbol=%s", currencyPair.Upper(""))
 
-	body, err := common.RunRequest(url)
+	body, err := common.Get(url, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -77,7 +77,7 @@ func (e *Binance) GetTicker(from, to string) (*entity.Ticker, error) {
 func (e *Binance) PrintAllPrices() error {
 	url := "https://api.binance.com/api/v1/ticker/allPrices"
 
-	body, err := common.RunRequest(url)
+	body, err := common.Get(url, nil)
 	if err != nil {
 		return err
 	}

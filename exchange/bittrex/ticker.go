@@ -60,7 +60,7 @@ func (e *Bittrex) GetTicker(from, to string) (*entity.Ticker, error) {
 
 	url := fmt.Sprintf("https://bittrex.com/api/v1.1/public/getmarketsummary?market=%s", currencyPair.Lower("-"))
 
-	body, err := common.RunRequest(url)
+	body, err := common.Get(url, nil)
 	if err != nil {
 		return nil, err
 	}

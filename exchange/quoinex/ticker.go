@@ -33,7 +33,7 @@ func (e *Quoinex) GetTicker(from, to string) (*entity.Ticker, error) {
 
 	url := "https://api.quoine.com/products"
 
-	body, err := common.RunRequest(url)
+	body, err := common.Get(url, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -58,7 +58,7 @@ func (e *Quoinex) GetTicker(from, to string) (*entity.Ticker, error) {
 	// ---------------------
 	url = "https://api.quoine.com/products/" + id
 
-	body, err = common.RunRequest(url)
+	body, err = common.Get(url, nil)
 	if err != nil {
 		return nil, err
 	}

@@ -27,8 +27,7 @@ func (e *Gdax) GetTicker(from, to string) (*entity.Ticker, error) {
 
 	url := fmt.Sprintf("https://api.gdax.com/products/%s/ticker", currencyPair.Upper("-"))
 
-	// TODO Run application/json request
-	body, err := common.RunRequest(url)
+	body, err := common.Get(url, map[string]string{"Content-Type": "application/json"})
 	if err != nil {
 		return nil, fmt.Errorf("%q: %s", err, string(body))
 	}

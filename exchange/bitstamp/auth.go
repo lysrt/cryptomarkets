@@ -20,10 +20,9 @@ func (e *Bitstamp) getAuthValues() url.Values {
 	macSum := mac.Sum(nil)
 	sig := strings.ToUpper(hex.EncodeToString(macSum))
 
-	form := url.Values{
+	return url.Values{
 		"key":       {e.ApiKey},
 		"signature": {sig},
 		"nonce":     {nonce},
 	}
-	return form
 }

@@ -14,3 +14,7 @@ func New(c cryptomarkets.ExchangeConfig) *Bitstamp {
 
 	return &Bitstamp{c.CustomerID, c.ApiKey, c.Secret, private}
 }
+
+type errorResponse struct {
+	Error string `json:"error"`
+}

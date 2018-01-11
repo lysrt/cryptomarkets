@@ -41,7 +41,7 @@ func (e *Bitstamp) GetTicker(from, to string) (*entity.Ticker, error) {
 
 	url := fmt.Sprintf("https://www.bitstamp.net/api/v2/ticker/%s/", currencyPair.Lower(""))
 
-	body, err := common.RunRequest(url)
+	body, err := common.Get(url, nil)
 	if err != nil {
 		return nil, fmt.Errorf("bad HTTP response: %q", err.Error())
 	}
