@@ -1,12 +1,9 @@
 package okcoin
 
 import (
-	"crypto/md5"
-	"encoding/hex"
 	"encoding/json"
 	"fmt"
 	"net/url"
-	"strings"
 
 	"github.com/lysrt/cryptomarkets/common"
 	"github.com/lysrt/cryptomarkets/entity"
@@ -43,23 +40,7 @@ type okCoinBalanceEntry struct {
 func (e *Okcoin) GetBalance() (*entity.Balance, error) {
 	urlString := "https://www.okcoin.com/api/v1/userinfo.do"
 
-	params := "api_key=" + e.ApiKey
-
-	signInput := params + "&secret_key=" + e.Secret
-
-	h := md5.New()
-	h.Write([]byte(signInput))
-	resultB := h.Sum(nil)
-
-	result := hex.EncodeToString(resultB)
-	signature := strings.ToUpper(result)
-
-	values := url.Values{
-		"api_key": {e.ApiKey},
-		"sign":    {signature},
-	}
-
-	body, err := common.Post(urlString, values)
+	body, err := common.Post(urlString, e.getSignedValues(url.Values{}))
 	if err != nil {
 		return nil, fmt.Errorf("bad HTTP response: %q", err.Error())
 	}
