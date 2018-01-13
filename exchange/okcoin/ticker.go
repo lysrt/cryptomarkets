@@ -8,7 +8,7 @@ import (
 	"github.com/lysrt/cryptomarkets/entity"
 )
 
-type okcoinResponse struct {
+type okcoinTickerResponse struct {
 	Date      int64        `json:"date,string"`
 	Ticker    okcoinTicker `json:"ticker"`
 	ErrorCode int64        `json:"error_code"`
@@ -36,7 +36,7 @@ func (e *Okcoin) GetTicker(from, to string) (*entity.Ticker, error) {
 		return nil, fmt.Errorf("bad HTTP response: %q", err.Error())
 	}
 
-	var resp okcoinResponse
+	var resp okcoinTickerResponse
 
 	err = json.Unmarshal(body, &resp)
 	if err != nil {
