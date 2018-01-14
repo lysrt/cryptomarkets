@@ -1,6 +1,7 @@
 package okcoin
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"net/url"
@@ -22,6 +23,11 @@ const (
 	okesCOM                 = "okex"
 	outerAddress            = "address"
 )
+
+type okcoinWithdrawalResponse struct {
+	Result    bool `json:"result"`
+	ErrorCode int  `json:"error_code"`
+}
 
 func (e *Okcoin) Withdrawal(currency, destination string, amount float64) error {
 	urlString := "https://www.okcoin.com/api/v1/withdraw.do"
@@ -47,8 +53,8 @@ func (e *Okcoin) Withdrawal(currency, destination string, amount float64) error 
 		"chargefee":        {"0.002"},
 		"trade_pwd":        {e.CustomerID},
 		"withdraw_address": {destination},
-		"withdraw_amount":  {strconv.FormatFloat(amount, 'f', 6, 64)},
-		"target":           {outerAddress},
+		"withdraw_amount":  {strconv.FormatFloat(amount, 'f', -1, 64)},
+		// "target":           {outerAddress}, // Not mandatory
 	}
 
 	body, err := common.Post(urlString, e.getSignedValues(values))
@@ -56,7 +62,18 @@ func (e *Okcoin) Withdrawal(currency, destination string, amount float64) error 
 		return err
 	}
 
+	var resp okcoinWithdrawalResponse
+	err = json.Unmarshal(body, &resp)
+	if err != nil {
+		return err
+	}
+
+	if resp.Result == false {
+		return fmt.Errorf("okcoin API error (%d): %s", resp.ErrorCode, errorCodes[resp.ErrorCode])
+	}
+
 	fmt.Println(string(body))
+	fmt.Println(resp)
 
 	return nil
 }
