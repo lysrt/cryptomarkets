@@ -1,6 +1,7 @@
 package quoinex
 
 import (
+	"errors"
 	"fmt"
 
 	"github.com/lysrt/cryptomarkets/entity"
@@ -12,4 +13,8 @@ func (e *Quoinex) DepositAddress(currency string) (string, error) {
 	default:
 		return "", fmt.Errorf("cannot get %s deposit address", currency)
 	}
+}
+
+func (q *Quoinex) Withdrawal(currency, destination string, amount float64) error {
+	return errors.New("unimplemented")
 }

@@ -17,10 +17,14 @@ func (e *Binance) DepositAddress(currency string) (string, error) {
 	}
 }
 
-func (e *Binance) bitcoinWithdrawal(destination, amount string) (string, error) {
+func (e *Binance) bitcoinDepositAddress() (string, error) {
 	return "", errors.New("unimplemented")
 }
 
-func (e *Binance) bitcoinDepositAddress() (string, error) {
+func (q *Binance) Withdrawal(currency, destination string, amount float64) error {
+	return errors.New("unimplemented")
+}
+
+func (e *Binance) bitcoinWithdrawal(destination, amount string) (string, error) {
 	return "", errors.New("unimplemented")
 }

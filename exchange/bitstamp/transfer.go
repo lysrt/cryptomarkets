@@ -46,6 +46,10 @@ func (e *Bitstamp) bitcoinDepositAddress() (string, error) {
 	return address, nil
 }
 
+func (q *Bitstamp) Withdrawal(currency, destination string, amount float64) error {
+	return errors.New("unimplemented")
+}
+
 func (e *Bitstamp) bitcoinWithdrawal(destination, amount string) (string, error) {
 	urlString := "https://www.bitstamp.net/api/bitcoin_withdrawal/"
 
