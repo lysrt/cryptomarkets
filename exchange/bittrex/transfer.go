@@ -21,8 +21,8 @@ func (e *Bittrex) bitcoinDepositAddress() (string, error) {
 	return "", errors.New("unimplemented")
 }
 
-func (q *Bittrex) Withdrawal(currency, destination string, amount float64) error {
-	return errors.New("unimplemented")
+func (q *Bittrex) Withdrawal(currency, destination string, amount float64) (int, error) {
+	return 0, errors.New("unimplemented")
 }
 
 func (e *Bittrex) bitcoinWithdrawal(destination, amount string) (string, error) {

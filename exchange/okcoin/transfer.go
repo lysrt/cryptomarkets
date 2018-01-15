@@ -25,11 +25,12 @@ const (
 )
 
 type okcoinWithdrawalResponse struct {
-	Result    bool `json:"result"`
-	ErrorCode int  `json:"error_code"`
+	Result     bool `json:"result"`
+	ErrorCode  int  `json:"error_code"`
+	WithdrawID int  `json:"withdraw_id"`
 }
 
-func (e *Okcoin) Withdrawal(currency, destination string, amount float64) error {
+func (e *Okcoin) Withdrawal(currency, destination string, amount float64) (int, error) {
 	urlString := "https://www.okcoin.com/api/v1/withdraw.do"
 
 	var symbol string
@@ -45,12 +46,12 @@ func (e *Okcoin) Withdrawal(currency, destination string, amount float64) error 
 	case "bch":
 		symbol = "bch_usd"
 	default:
-		return fmt.Errorf("okcoin cannot withdraw %s, only: btc, ltc, eth, etc, bch", currency)
+		return 0, fmt.Errorf("okcoin cannot withdraw %s, only: btc, ltc, eth, etc, bch", currency)
 	}
 
 	values := url.Values{
 		"symbol":           {symbol},
-		"chargefee":        {"0.002"},
+		"chargefee":        {"0.01"}, //0.002
 		"trade_pwd":        {e.CustomerID},
 		"withdraw_address": {destination},
 		"withdraw_amount":  {strconv.FormatFloat(amount, 'f', -1, 64)},
@@ -59,21 +60,18 @@ func (e *Okcoin) Withdrawal(currency, destination string, amount float64) error 
 
 	body, err := common.Post(urlString, e.getSignedValues(values))
 	if err != nil {
-		return err
+		return 0, err
 	}
 
 	var resp okcoinWithdrawalResponse
 	err = json.Unmarshal(body, &resp)
 	if err != nil {
-		return err
+		return 0, err
 	}
 
 	if resp.Result == false {
-		return fmt.Errorf("okcoin API error (%d): %s", resp.ErrorCode, errorCodes[resp.ErrorCode])
+		return 0, fmt.Errorf("okcoin API error (%d): %s", resp.ErrorCode, errorCodes[resp.ErrorCode])
 	}
 
-	fmt.Println(string(body))
-	fmt.Println(resp)
-
-	return nil
+	return resp.WithdrawID, nil
 }

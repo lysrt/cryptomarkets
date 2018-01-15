@@ -15,6 +15,6 @@ func (e *Quoinex) DepositAddress(currency string) (string, error) {
 	}
 }
 
-func (q *Quoinex) Withdrawal(currency, destination string, amount float64) error {
-	return errors.New("unimplemented")
+func (q *Quoinex) Withdrawal(currency, destination string, amount float64) (int, error) {
+	return 0, errors.New("unimplemented")
 }
