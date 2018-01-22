@@ -3,6 +3,7 @@ package bitstamp
 import (
 	"encoding/json"
 	"fmt"
+	"strconv"
 
 	"github.com/lysrt/cryptomarkets/common"
 	"github.com/lysrt/cryptomarkets/entity"
@@ -71,5 +72,70 @@ func (e *Bitstamp) GetTicker(from, to string) (*entity.Ticker, error) {
 		PriceChange:   0,
 		PercentChange: 0,
 		Pair:          currencyPair,
+	}, nil
+}
+
+type bitstampOrderBook struct {
+	Timestamp int64      `json:"timestamp,string"`
+	Bids      [][]string `json:"bids, string"`
+	Asks      [][]string `json:"asks, string"`
+}
+
+func (e *Bitstamp) OrderBook(from, to string) (*entity.OrderBook, error) {
+	currencyPair := entity.Pair{
+		First:  entity.NewCurrency(from),
+		Second: entity.NewCurrency(to),
+	}
+
+	url := fmt.Sprintf("https://www.bitstamp.net/api/v2/order_book/%s/", currencyPair.Lower(""))
+
+	body, err := common.Get(url, nil)
+	if err != nil {
+		return nil, fmt.Errorf("bad HTTP response: %q", err.Error())
+	}
+
+	var o bitstampOrderBook
+
+	err = json.Unmarshal(body, &o)
+	if err != nil {
+		return nil, err
+	}
+
+	bids := []entity.Order{}
+	for _, b := range o.Bids {
+		price, err := strconv.ParseFloat(b[0], 64)
+		if err != nil {
+			return nil, err
+		}
+		quantity, err := strconv.ParseFloat(b[1], 64)
+		if err != nil {
+			return nil, err
+		}
+		bids = append(bids, entity.Order{
+			Price:    price,
+			Quantity: quantity,
+		})
+	}
+
+	asks := []entity.Order{}
+	for _, a := range o.Asks {
+		price, err := strconv.ParseFloat(a[0], 64)
+		if err != nil {
+			return nil, err
+		}
+		quantity, err := strconv.ParseFloat(a[1], 64)
+		if err != nil {
+			return nil, err
+		}
+		asks = append(asks, entity.Order{
+			Price:    price,
+			Quantity: quantity,
+		})
+	}
+
+	return &entity.OrderBook{
+		Timestamp: o.Timestamp,
+		Asks:      asks,
+		Bids:      bids,
 	}, nil
 }

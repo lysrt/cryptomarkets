@@ -19,3 +19,14 @@ type Ticker struct {
 	PercentChange float64
 	Pair          Pair
 }
+
+type Order struct {
+	Price    float64
+	Quantity float64
+}
+
+type OrderBook struct {
+	Timestamp int64
+	Asks      []Order
+	Bids      []Order
+}

@@ -18,6 +18,15 @@ type pricer interface {
 }
 
 func main() {
+	bit := &bitstamp.Bitstamp{}
+	ob, err := bit.OrderBook("ETH", "BTC")
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println(ob.Asks[0])
+}
+
+func test() {
 	providers := map[string]pricer{
 		"bitstamp": &bitstamp.Bitstamp{},
 		"quoinex":  &quoinex.Quoinex{},
