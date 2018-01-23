@@ -18,12 +18,12 @@ type pricer interface {
 }
 
 func main() {
-	bit := &bitstamp.Bitstamp{}
-	ob, err := bit.OrderBook("ETH", "BTC")
+	ok := &okcoin.Okcoin{}
+	bal, err := ok.GetBalance()
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Println(ob.Asks[0])
+	fmt.Println(bal)
 }
 
 func test() {
