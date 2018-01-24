@@ -2,6 +2,7 @@ package binance
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"time"
 
@@ -97,4 +98,8 @@ func (e *Binance) PrintAllPrices() error {
 	}
 
 	return nil
+}
+
+func (e *Binance) OrderBook(from, to string) (*entity.OrderBook, error) {
+	return nil, errors.New("unimplemented")
 }

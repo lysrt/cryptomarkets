@@ -2,6 +2,7 @@ package gdax
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"time"
 
@@ -63,3 +64,7 @@ func (e *Gdax) GetTicker(from, to string) (*entity.Ticker, error) {
 }
 
 // TODO Could use /products to list all available currency pairs
+
+func (e *Gdax) OrderBook(from, to string) (*entity.OrderBook, error) {
+	return nil, errors.New("unimplemented")
+}

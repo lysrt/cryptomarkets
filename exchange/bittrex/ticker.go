@@ -2,6 +2,7 @@ package bittrex
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"time"
 
@@ -109,3 +110,7 @@ func (e *Bittrex) GetTicker(from, to string) (*entity.Ticker, error) {
 }
 
 // TODO Could use "getAllMarkets"
+
+func (e *Bittrex) OrderBook(from, to string) (*entity.OrderBook, error) {
+	return nil, errors.New("unimplemented")
+}

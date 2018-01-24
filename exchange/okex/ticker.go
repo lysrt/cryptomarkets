@@ -2,6 +2,7 @@ package okex
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 
 	"github.com/lysrt/cryptomarkets/common"
@@ -66,4 +67,8 @@ func (e *Okex) GetTicker(from, to string) (*entity.Ticker, error) {
 		PercentChange: 0,
 		Pair:          currencyPair,
 	}, nil
+}
+
+func (e *Okex) OrderBook(from, to string) (*entity.OrderBook, error) {
+	return nil, errors.New("unimplemented")
 }

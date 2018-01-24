@@ -98,3 +98,7 @@ func (e *Quoinex) GetTicker(from, to string) (*entity.Ticker, error) {
 		Pair:          currencyPair,
 	}, nil
 }
+
+func (e *Quoinex) OrderBook(from, to string) (*entity.OrderBook, error) {
+	return nil, errors.New("unimplemented")
+}
