@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"log"
+	"sync"
 
 	"github.com/lysrt/cryptomarkets/entity"
 	"github.com/lysrt/cryptomarkets/exchange/binance"
@@ -27,40 +28,26 @@ func main() {
 		"okex":     &okex.Okex{},
 	}
 
-	bp, err := providers["bitstamp"].GetTicker("BTC", "USD")
+	wg := &sync.WaitGroup{}
+	wg.Add(6)
+
+	go getPrice(wg, providers["bitstamp"], "bitstamp", "BTC", "USD")
+	go getPrice(wg, providers["quoinex"], "quoinex", "BTC", "USD")
+	go getPrice(wg, providers["binance"], "binance", "BTC", "USDT")
+	go getPrice(wg, providers["bittrex"], "bittrex", "USDT", "BTC")
+	go getPrice(wg, providers["gdax"], "gdax", "BTC", "USD")
+	go getPrice(wg, providers["okex"], "okex", "BTC", "USD")
+
+	wg.Wait()
+}
+
+func getPrice(wg *sync.WaitGroup, exchange pricer, name, ccy1, ccy2 string) {
+	ticker, err := exchange.GetTicker(ccy1, ccy2)
 	if err != nil {
-		log.Fatal(err)
+		log.Print(err)
+	} else {
+		fmt.Println(name, ":", ticker.LastPrice)
 	}
 
-	qp, err := providers["quoinex"].GetTicker("BTC", "USD")
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	bip, err := providers["binance"].GetTicker("BTC", "USDT")
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	btp, err := providers["bittrex"].GetTicker("USDT", "BTC")
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	gp, err := providers["gdax"].GetTicker("BTC", "USD")
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	ok, err := providers["okex"].GetTicker("BTC", "USD")
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	fmt.Println("Bitstamp:", bp.LastPrice)
-	fmt.Println("Quoinex: ", qp.LastPrice)
-	fmt.Println("Binance: ", bip.LastPrice)
-	fmt.Println("Bittrex: ", btp.LastPrice)
-	fmt.Println("GDAX:    ", gp.LastPrice)
-	fmt.Println("OKEx:  ", ok.LastPrice)
+	wg.Done()
 }
