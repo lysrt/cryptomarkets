@@ -9,7 +9,7 @@ import (
 	"github.com/lysrt/cryptomarkets/exchange/bitstamp"
 	"github.com/lysrt/cryptomarkets/exchange/bittrex"
 	"github.com/lysrt/cryptomarkets/exchange/gdax"
-	"github.com/lysrt/cryptomarkets/exchange/okcoin"
+	"github.com/lysrt/cryptomarkets/exchange/okex"
 	"github.com/lysrt/cryptomarkets/exchange/quoinex"
 )
 
@@ -18,22 +18,13 @@ type pricer interface {
 }
 
 func main() {
-	ok := &okcoin.Okcoin{}
-	bal, err := ok.GetBalance()
-	if err != nil {
-		log.Fatal(err)
-	}
-	fmt.Println(bal)
-}
-
-func test() {
 	providers := map[string]pricer{
 		"bitstamp": &bitstamp.Bitstamp{},
 		"quoinex":  &quoinex.Quoinex{},
 		"bittrex":  &bittrex.Bittrex{},
 		"binance":  &binance.Binance{},
 		"gdax":     &gdax.Gdax{},
-		"okcoin":   &okcoin.Okcoin{},
+		"okex":     &okex.Okex{},
 	}
 
 	bp, err := providers["bitstamp"].GetTicker("BTC", "USD")
@@ -61,7 +52,7 @@ func test() {
 		log.Fatal(err)
 	}
 
-	ok, err := providers["okcoin"].GetTicker("BTC", "USD")
+	ok, err := providers["okex"].GetTicker("BTC", "USD")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -71,5 +62,5 @@ func test() {
 	fmt.Println("Binance: ", bip.LastPrice)
 	fmt.Println("Bittrex: ", btp.LastPrice)
 	fmt.Println("GDAX:    ", gp.LastPrice)
-	fmt.Println("OKcoin:  ", ok.LastPrice)
+	fmt.Println("OKEx:  ", ok.LastPrice)
 }

@@ -1,4 +1,4 @@
-package okcoin
+package okex
 
 import (
 	"encoding/json"
@@ -20,7 +20,7 @@ const (
 	marketSell           = "sell_market"
 )
 
-func okcoinSymbol(ccy string) string {
+func okexSymbol(ccy string) string {
 	switch strings.ToLower(ccy) {
 	case "btc":
 		return "btc_usd"
@@ -44,15 +44,15 @@ const (
 	Sell Side = "sell"
 )
 
-type okcoinOrderResponse struct {
+type okexOrderResponse struct {
 	Result  bool `json:"result"`
 	OrderID int  `json:"order_id"`
 }
 
-func (e *Okcoin) MarketOrder(from, to string, side Side, amount float64) (int, error) {
+func (e *Okex) MarketOrder(from, to string, side Side, amount float64) (int, error) {
 	urlString := "https://www.okcoin.com/api/v1/trade.do"
 
-	fromCurrency := okcoinSymbol(from)
+	fromCurrency := okexSymbol(from)
 	if fromCurrency == "" {
 		return 0, fmt.Errorf("okcoin cannot withdraw %s, only: btc, ltc, eth, etc, bch", from)
 	}
@@ -81,7 +81,7 @@ func (e *Okcoin) MarketOrder(from, to string, side Side, amount float64) (int, e
 			"amount": {amnt}, // Needed on market sell
 		}
 	} else {
-		return 0, errors.New("unknown okcoin OrderMarket side")
+		return 0, errors.New("unknown okex OrderMarket side")
 	}
 
 	body, err := common.Post(urlString, e.getSignedValues(values))
@@ -89,7 +89,7 @@ func (e *Okcoin) MarketOrder(from, to string, side Side, amount float64) (int, e
 		return 0, err
 	}
 
-	var resp okcoinOrderResponse
+	var resp okexOrderResponse
 	err = json.Unmarshal(body, &resp)
 	if err != nil {
 		return 0, err

@@ -1,4 +1,4 @@
-package okcoin
+package okex
 
 import (
 	"encoding/json"
@@ -9,25 +9,25 @@ import (
 	"github.com/lysrt/cryptomarkets/entity"
 )
 
-type okcoinBalanceResponse struct {
-	Result    bool          `json:"result"`
-	Info      okcoinBalance `json:"info"`
-	ErrorCode int           `json:"error_code"`
+type okexBalanceResponse struct {
+	Result    bool        `json:"result"`
+	Info      okexBalance `json:"info"`
+	ErrorCode int         `json:"error_code"`
 }
 
-type okcoinBalance struct {
+type okexBalance struct {
 	Funds struct {
-		Borrow okCoinBalanceEntry `json:"borrow"`
+		Borrow okexBalanceEntry `json:"borrow"`
 		Asset  struct {
 			Total float64 `json:"total,string"`
 			Net   float64 `json:"net,string"`
 		} `json:"asset"`
-		Free    okCoinBalanceEntry `json:"free"`
-		Freezed okCoinBalanceEntry `json:"freezed"`
+		Free    okexBalanceEntry `json:"free"`
+		Freezed okexBalanceEntry `json:"freezed"`
 	} `json:"funds"`
 }
 
-type okCoinBalanceEntry struct {
+type okexBalanceEntry struct {
 	// OKcoin
 	BTC float64 `json:"btc,string"`
 	BCC float64 `json:"bcc,string"`
@@ -176,7 +176,7 @@ type okCoinBalanceEntry struct {
 	SWFTC  float64 `json:"swftc,string"`
 }
 
-func (e *Okcoin) GetBalance() (*entity.Balance, error) {
+func (e *Okex) GetBalance() (*entity.Balance, error) {
 	urlString := "https://www.okex.com/api/v1/userinfo.do"
 	// urlString := "https://www.okcoin.com/api/v1/userinfo.do"
 
@@ -185,7 +185,7 @@ func (e *Okcoin) GetBalance() (*entity.Balance, error) {
 		return nil, fmt.Errorf("bad HTTP response: %q", err.Error())
 	}
 
-	var resp okcoinBalanceResponse
+	var resp okexBalanceResponse
 
 	err = json.Unmarshal(body, &resp)
 	if err != nil {

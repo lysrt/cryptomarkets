@@ -1,4 +1,4 @@
-package okcoin
+package okex
 
 import (
 	"crypto/md5"
@@ -8,7 +8,7 @@ import (
 	"strings"
 )
 
-func (e *Okcoin) getSignedValues(values url.Values) url.Values {
+func (e *Okex) getSignedValues(values url.Values) url.Values {
 	values.Add("api_key", e.ApiKey)
 
 	signInput := fmt.Sprintf("%s&secret_key=%s", values.Encode(), e.Secret)

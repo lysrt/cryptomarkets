@@ -1,16 +1,16 @@
-package okcoin
+package okex
 
 import "github.com/lysrt/cryptomarkets"
 
-type Okcoin struct {
+type Okex struct {
 	CustomerID string
 	ApiKey     string
 	Secret     string
 	private    bool
 }
 
-func New(c cryptomarkets.ExchangeConfig) *Okcoin {
+func New(c cryptomarkets.ExchangeConfig) *Okex {
 	private := c.CustomerID != "" && c.ApiKey != "" && c.Secret != ""
 
-	return &Okcoin{c.CustomerID, c.ApiKey, c.Secret, private}
+	return &Okex{c.CustomerID, c.ApiKey, c.Secret, private}
 }

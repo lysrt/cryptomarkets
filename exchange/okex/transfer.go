@@ -1,4 +1,4 @@
-package okcoin
+package okex
 
 import (
 	"encoding/json"
@@ -11,18 +11,11 @@ import (
 	"github.com/lysrt/cryptomarkets/common"
 )
 
-func (e *Okcoin) DepositAddress(currency string) (string, error) {
+func (e *Okex) DepositAddress(currency string) (string, error) {
 	return "", errors.New("unavailable in okcoin, check deposit address in your account")
 }
 
 type targetType string
-
-const (
-	okcoinCN     targetType = "okcn"
-	okcoinCOM               = "okcom"
-	okesCOM                 = "okex"
-	outerAddress            = "address"
-)
 
 type okcoinWithdrawalResponse struct {
 	Result     bool `json:"result"`
@@ -30,7 +23,7 @@ type okcoinWithdrawalResponse struct {
 	WithdrawID int  `json:"withdraw_id"`
 }
 
-func (e *Okcoin) Withdrawal(currency, destination string, amount float64) (int, error) {
+func (e *Okex) Withdrawal(currency, destination string, amount float64) (int, error) {
 	urlString := "https://www.okcoin.com/api/v1/withdraw.do"
 
 	var symbol string
@@ -46,7 +39,7 @@ func (e *Okcoin) Withdrawal(currency, destination string, amount float64) (int, 
 	case "bch":
 		symbol = "bch_usd"
 	default:
-		return 0, fmt.Errorf("okcoin cannot withdraw %s, only: btc, ltc, eth, etc, bch", currency)
+		return 0, fmt.Errorf("okex cannot withdraw %s, only: btc, ltc, eth, etc, bch", currency)
 	}
 
 	values := url.Values{

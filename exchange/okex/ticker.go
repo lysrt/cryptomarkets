@@ -1,4 +1,4 @@
-package okcoin
+package okex
 
 import (
 	"encoding/json"
@@ -8,13 +8,13 @@ import (
 	"github.com/lysrt/cryptomarkets/entity"
 )
 
-type okcoinTickerResponse struct {
-	Date      int64        `json:"date,string"`
-	Ticker    okcoinTicker `json:"ticker"`
-	ErrorCode int64        `json:"error_code"`
+type okexTickerResponse struct {
+	Date      int64      `json:"date,string"`
+	Ticker    okexTicker `json:"ticker"`
+	ErrorCode int64      `json:"error_code"`
 }
 
-type okcoinTicker struct {
+type okexTicker struct {
 	High float64 `json:"high,string"`
 	Vol  float64 `json:"vol,string"`
 	Last float64 `json:"last,string"`
@@ -23,7 +23,7 @@ type okcoinTicker struct {
 	Sell float64 `json:"sell,string"`
 }
 
-func (e *Okcoin) GetTicker(from, to string) (*entity.Ticker, error) {
+func (e *Okex) GetTicker(from, to string) (*entity.Ticker, error) {
 	currencyPair := entity.Pair{
 		First:  entity.NewCurrency(from),
 		Second: entity.NewCurrency(to),
@@ -36,7 +36,7 @@ func (e *Okcoin) GetTicker(from, to string) (*entity.Ticker, error) {
 		return nil, fmt.Errorf("bad HTTP response: %q", err.Error())
 	}
 
-	var resp okcoinTickerResponse
+	var resp okexTickerResponse
 
 	err = json.Unmarshal(body, &resp)
 	if err != nil {

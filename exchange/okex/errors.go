@@ -1,4 +1,4 @@
-package okcoin
+package okex
 
 // HTTP ERROR CODE 403 	Too many requests, IP is shielded.
 // Request Timed Out 	Too many requests, IP is shielded.
