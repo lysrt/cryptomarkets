@@ -100,11 +100,11 @@ fmt.Println(balance["BTC"])
 
 ```json
 [
-	{
+    {
         "name": "bitstamp",
-        "apiKey" : "",
-        "secret" : "",
-        "customerId" : ""
+        "apiKey" : "abc...xyz",
+        "secret" : "secret_key",
+        "customerId" : "123456"
     }
 ]
 ```
@@ -127,7 +127,7 @@ balance, _ := exchange.GetBalance()
 log.Println(balance)
 ```
 
-For a full example, see [example/main.go]
+For a full example, see [example/main.go](/example/main.go)
 
 ### Code organization
 
