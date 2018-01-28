@@ -5,49 +5,41 @@ import (
 	"log"
 	"sync"
 
-	"github.com/lysrt/cryptomarkets"
-	"github.com/lysrt/cryptomarkets/exchange/binance"
-	"github.com/lysrt/cryptomarkets/exchange/bitstamp"
-	"github.com/lysrt/cryptomarkets/exchange/bittrex"
-	"github.com/lysrt/cryptomarkets/exchange/gdax"
-	"github.com/lysrt/cryptomarkets/exchange/okex"
-	"github.com/lysrt/cryptomarkets/exchange/quoinex"
+	"github.com/lysrt/cryptomarkets/loader"
 )
 
-type pricer interface {
-	GetTicker(from, to string) (*cryptomarkets.Ticker, error)
-}
-
 func main() {
-	providers := map[string]pricer{
-		"bitstamp": &bitstamp.Bitstamp{},
-		"quoinex":  &quoinex.Quoinex{},
-		"bittrex":  &bittrex.Bittrex{},
-		"binance":  &binance.Binance{},
-		"gdax":     &gdax.Gdax{},
-		"okex":     &okex.Okex{},
+	loader, err := loader.New("config.json")
+	if err != nil {
+		log.Fatal(err)
 	}
 
 	wg := &sync.WaitGroup{}
 	wg.Add(6)
 
-	go getPrice(wg, providers["bitstamp"], "bitstamp", "BTC", "USD")
-	go getPrice(wg, providers["quoinex"], "quoinex", "BTC", "USD")
-	go getPrice(wg, providers["binance"], "binance", "BTC", "USDT")
-	go getPrice(wg, providers["bittrex"], "bittrex", "USDT", "BTC")
-	go getPrice(wg, providers["gdax"], "gdax", "BTC", "USD")
-	go getPrice(wg, providers["okex"], "okex", "BTC", "USD")
+	go getPrice(wg, loader, "bitstamp", "BTC", "USD")
+	go getPrice(wg, loader, "quoinex", "BTC", "USD")
+	go getPrice(wg, loader, "binance", "BTC", "USDT")
+	go getPrice(wg, loader, "bittrex", "USDT", "BTC")
+	go getPrice(wg, loader, "gdax", "BTC", "USD")
+	go getPrice(wg, loader, "okex", "BTC", "USD")
 
 	wg.Wait()
 }
 
-func getPrice(wg *sync.WaitGroup, exchange pricer, name, ccy1, ccy2 string) {
+func getPrice(wg *sync.WaitGroup, loader loader.Loader, name, ccy1, ccy2 string) {
+	defer wg.Done()
+
+	exchange, err := loader.GetExchange(name)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+
 	ticker, err := exchange.GetTicker(ccy1, ccy2)
 	if err != nil {
-		log.Print(err)
+		log.Println(err)
 	} else {
 		fmt.Println(name, ":", ticker.LastPrice)
 	}
-
-	wg.Done()
 }

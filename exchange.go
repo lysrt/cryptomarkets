@@ -13,13 +13,6 @@ type Exchange interface {
 	Withdrawal(currency, destination string, amount float64) (int, error)
 }
 
-type ExchangeConfig struct {
-	Name       string
-	ApiKey     string
-	Secret     string
-	CustomerID string
-}
-
 // Ticker holds the common ticker information of an exchange price
 type Ticker struct {
 	Timestamp     int64

@@ -1,16 +1,13 @@
 package quoinex
 
-import "github.com/lysrt/cryptomarkets"
-
 type Quoinex struct {
-	CustomerID string
 	ApiKey     string
 	Secret     string
+	CustomerID string
 	private    bool
 }
 
-func New(c cryptomarkets.ExchangeConfig) *Quoinex {
-	private := c.CustomerID != "" && c.ApiKey != "" && c.Secret != ""
-
-	return &Quoinex{c.CustomerID, c.ApiKey, c.Secret, private}
+func New(apiKey, secret, customerID string) *Quoinex {
+	private := apiKey != "" && secret != "" && customerID != ""
+	return &Quoinex{apiKey, secret, customerID, private}
 }

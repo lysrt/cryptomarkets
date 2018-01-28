@@ -1,18 +1,16 @@
 package bitstamp
 
-import "github.com/lysrt/cryptomarkets"
-
 type Bitstamp struct {
-	CustomerID string
 	ApiKey     string
 	Secret     string
+	CustomerID string
 	private    bool
 }
 
-func New(c cryptomarkets.ExchangeConfig) *Bitstamp {
-	private := c.CustomerID != "" && c.ApiKey != "" && c.Secret != ""
+func New(apiKey, secret, customerID string) *Bitstamp {
+	private := apiKey != "" && secret != "" && customerID != ""
 
-	return &Bitstamp{c.CustomerID, c.ApiKey, c.Secret, private}
+	return &Bitstamp{apiKey, secret, customerID, private}
 }
 
 type errorResponse struct {

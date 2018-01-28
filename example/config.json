@@ -1,0 +1,35 @@
+[
+    {
+        "name": "binance",
+        "apiKey" : "",
+        "secret" : ""
+    },
+    {
+        "name": "bitstamp",
+        "apiKey" : "",
+        "secret" : "",
+        "customerId" : ""
+    },
+    {
+        "name": "bittrex",
+        "apiKey" : "",
+        "secret" : ""
+    },
+    {
+        "name": "gdax",
+        "apiKey" : "",
+        "secret" : ""
+    },
+    {
+        "name": "okex",
+        "apiKey" : "",
+        "secret" : "",
+        "customerId" : ""
+    },
+    {
+        "name": "quoinex",
+        "apiKey" : "",
+        "secret" : "",
+        "customerId" : ""
+    }
+]

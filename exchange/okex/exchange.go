@@ -1,7 +1,5 @@
 package okex
 
-import "github.com/lysrt/cryptomarkets"
-
 type Okex struct {
 	CustomerID string
 	ApiKey     string
@@ -9,8 +7,8 @@ type Okex struct {
 	private    bool
 }
 
-func New(c cryptomarkets.ExchangeConfig) *Okex {
-	private := c.CustomerID != "" && c.ApiKey != "" && c.Secret != ""
+func New(apiKey, secret, customerID string) *Okex {
+	private := apiKey != "" && secret != "" && customerID != ""
 
-	return &Okex{c.CustomerID, c.ApiKey, c.Secret, private}
+	return &Okex{apiKey, secret, customerID, private}
 }
