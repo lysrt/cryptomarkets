@@ -40,6 +40,6 @@ func getPrice(wg *sync.WaitGroup, loader loader.Loader, name, ccy1, ccy2 string)
 	if err != nil {
 		log.Println(err)
 	} else {
-		fmt.Println(name, ":", ticker.LastPrice)
+		fmt.Printf("%10s %f\n", name, ticker.LastPrice)
 	}
 }
