@@ -6,9 +6,8 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/lysrt/cryptomarkets/common"
-
-	"github.com/lysrt/cryptomarkets/entity"
+	"github.com/lysrt/cryptomarkets"
+	"github.com/lysrt/cryptomarkets/internal"
 )
 
 type binanceTicker struct {
@@ -35,15 +34,15 @@ type binanceTicker struct {
 	Count              int64   `json:"count"`
 }
 
-func (e *Binance) GetTicker(from, to string) (*entity.Ticker, error) {
-	currencyPair := entity.Pair{
-		First:  entity.NewCurrency(from),
-		Second: entity.NewCurrency(to),
+func (e *Binance) GetTicker(from, to string) (*cryptomarkets.Ticker, error) {
+	currencyPair := cryptomarkets.Pair{
+		First:  cryptomarkets.NewCurrency(from),
+		Second: cryptomarkets.NewCurrency(to),
 	}
 
 	url := fmt.Sprintf("https://api.binance.com/api/v1/ticker/24hr?symbol=%s", currencyPair.Upper(""))
 
-	body, err := common.Get(url, nil)
+	body, err := internal.Get(url, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -54,7 +53,7 @@ func (e *Binance) GetTicker(from, to string) (*entity.Ticker, error) {
 		return nil, err
 	}
 
-	return &entity.Ticker{
+	return &cryptomarkets.Ticker{
 		Timestamp:     time.Now().Unix(),
 		LastPrice:     t.LastPrice,
 		LastQuantity:  t.LastQty,
@@ -78,7 +77,7 @@ func (e *Binance) GetTicker(from, to string) (*entity.Ticker, error) {
 func (e *Binance) PrintAllPrices() error {
 	url := "https://api.binance.com/api/v1/ticker/allPrices"
 
-	body, err := common.Get(url, nil)
+	body, err := internal.Get(url, nil)
 	if err != nil {
 		return err
 	}
@@ -100,6 +99,6 @@ func (e *Binance) PrintAllPrices() error {
 	return nil
 }
 
-func (e *Binance) OrderBook(from, to string) (*entity.OrderBook, error) {
+func (e *Binance) OrderBook(from, to string) (*cryptomarkets.OrderBook, error) {
 	return nil, errors.New("unimplemented")
 }

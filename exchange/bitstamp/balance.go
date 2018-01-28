@@ -3,8 +3,8 @@ package bitstamp
 import (
 	"encoding/json"
 
-	"github.com/lysrt/cryptomarkets/common"
-	"github.com/lysrt/cryptomarkets/entity"
+	"github.com/lysrt/cryptomarkets"
+	"github.com/lysrt/cryptomarkets/internal"
 )
 
 type balance struct {
@@ -48,8 +48,8 @@ type balance struct {
 
 var urlString = "https://www.bitstamp.net/api/v2/balance/"
 
-func (e *Bitstamp) GetBalance() (*entity.Balance, error) {
-	body, err := common.Post(urlString, e.getAuthValues())
+func (e *Bitstamp) GetBalance() (*cryptomarkets.Balance, error) {
+	body, err := internal.Post(urlString, e.getAuthValues())
 	if err != nil {
 		return nil, err
 	}
@@ -60,7 +60,7 @@ func (e *Bitstamp) GetBalance() (*entity.Balance, error) {
 		return nil, err
 	}
 
-	balances := entity.Balance{
+	balances := cryptomarkets.Balance{
 		"BTC": b.BtcAvailable,
 		"ETH": b.EthAvailable,
 		"USD": b.UsdAvailable,

@@ -6,15 +6,15 @@ import (
 	"fmt"
 	"strconv"
 
-	"github.com/lysrt/cryptomarkets/entity"
+	"github.com/lysrt/cryptomarkets"
 
-	"github.com/lysrt/cryptomarkets/common"
+	"github.com/lysrt/cryptomarkets/internal"
 )
 
 // https://www.bitstamp.net/api/v2/withdrawal-requests/
 
 func (e *Bitstamp) DepositAddress(currency string) (string, error) {
-	ccy := entity.NewCurrency(currency)
+	ccy := cryptomarkets.NewCurrency(currency)
 	switch ccy.Upper() {
 	case "BTC":
 		return e.bitcoinDepositAddress()
@@ -30,7 +30,7 @@ func (e *Bitstamp) DepositAddress(currency string) (string, error) {
 func (e *Bitstamp) bitcoinDepositAddress() (string, error) {
 	url := "https://www.bitstamp.net/api/bitcoin_deposit_address/"
 
-	body, err := common.Post(url, e.getAuthValues())
+	body, err := internal.Post(url, e.getAuthValues())
 	if err != nil {
 		return "", fmt.Errorf("cannot get Bitstamp Bitcoin deposit address: %q", err)
 	}
@@ -54,7 +54,7 @@ func (e *Bitstamp) bitcoinDepositAddress() (string, error) {
 func (e *Bitstamp) ethereumDepositAddress() (string, error) {
 	url := "https://www.bitstamp.net/api/v2/eth_address/"
 
-	body, err := common.Post(url, e.getAuthValues())
+	body, err := internal.Post(url, e.getAuthValues())
 	if err != nil {
 		return "", fmt.Errorf("cannot get Bitstamp Ethereum deposit address: %q", err)
 	}
@@ -80,7 +80,7 @@ func (e *Bitstamp) ethereumDepositAddress() (string, error) {
 func (e *Bitstamp) litecoinDepositAddress() (string, error) {
 	url := "https://www.bitstamp.net/api/v2/ltc_address/"
 
-	body, err := common.Post(url, e.getAuthValues())
+	body, err := internal.Post(url, e.getAuthValues())
 	if err != nil {
 		return "", fmt.Errorf("cannot get Bitstamp Litecoin deposit address: %q", err)
 	}
@@ -104,7 +104,7 @@ func (e *Bitstamp) litecoinDepositAddress() (string, error) {
 }
 
 func (e *Bitstamp) Withdrawal(currency, destination string, amount float64) (int, error) {
-	ccy := entity.NewCurrency(currency)
+	ccy := cryptomarkets.NewCurrency(currency)
 	switch ccy.Upper() {
 	case "BTC":
 		return e.bitcoinWithdrawal(destination, strconv.FormatFloat(amount, 'f', -1, 64))
@@ -123,7 +123,7 @@ func (e *Bitstamp) bitcoinWithdrawal(destination, amount string) (int, error) {
 	values.Add("address", destination)
 	values.Add("instant", "0")
 
-	body, err := common.Post(urlString, values)
+	body, err := internal.Post(urlString, values)
 	if err != nil {
 		return 0, err
 	}
@@ -152,7 +152,7 @@ func (e *Bitstamp) litecoinWithdrawal(destination, amount string) (int, error) {
 	values.Add("address", destination)
 	values.Add("instant", "0")
 
-	body, err := common.Post(urlString, values)
+	body, err := internal.Post(urlString, values)
 	if err != nil {
 		return 0, err
 	}

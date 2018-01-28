@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/lysrt/cryptomarkets/common"
-	"github.com/lysrt/cryptomarkets/entity"
+	"github.com/lysrt/cryptomarkets"
+	"github.com/lysrt/cryptomarkets/internal"
 )
 
 type gdaxTicker struct {
@@ -20,15 +20,15 @@ type gdaxTicker struct {
 	Time    time.Time `json:"time"`
 }
 
-func (e *Gdax) GetTicker(from, to string) (*entity.Ticker, error) {
-	currencyPair := entity.Pair{
-		First:  entity.NewCurrency(from),
-		Second: entity.NewCurrency(to),
+func (e *Gdax) GetTicker(from, to string) (*cryptomarkets.Ticker, error) {
+	currencyPair := cryptomarkets.Pair{
+		First:  cryptomarkets.NewCurrency(from),
+		Second: cryptomarkets.NewCurrency(to),
 	}
 
 	url := fmt.Sprintf("https://api.gdax.com/products/%s/ticker", currencyPair.Upper("-"))
 
-	body, err := common.Get(url, map[string]string{"Content-Type": "application/json"})
+	body, err := internal.Get(url, map[string]string{"Content-Type": "application/json"})
 	if err != nil {
 		return nil, fmt.Errorf("%q: %s", err, string(body))
 	}
@@ -42,7 +42,7 @@ func (e *Gdax) GetTicker(from, to string) (*entity.Ticker, error) {
 	// TODO can get more data using stats: /products/<product-id>/stats
 	// s.Low, s.High, s.Open, s.Volume (s.Last, s.Volume30Day)
 
-	return &entity.Ticker{
+	return &cryptomarkets.Ticker{
 		Timestamp:     t.Time.Unix(),
 		LastPrice:     t.Price,
 		LastQuantity:  t.Size,
@@ -65,6 +65,6 @@ func (e *Gdax) GetTicker(from, to string) (*entity.Ticker, error) {
 
 // TODO Could use /products to list all available currency pairs
 
-func (e *Gdax) OrderBook(from, to string) (*entity.OrderBook, error) {
+func (e *Gdax) OrderBook(from, to string) (*cryptomarkets.OrderBook, error) {
 	return nil, errors.New("unimplemented")
 }

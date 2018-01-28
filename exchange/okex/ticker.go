@@ -5,8 +5,8 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/lysrt/cryptomarkets/common"
-	"github.com/lysrt/cryptomarkets/entity"
+	"github.com/lysrt/cryptomarkets"
+	"github.com/lysrt/cryptomarkets/internal"
 )
 
 type okexTickerResponse struct {
@@ -24,15 +24,15 @@ type okexTicker struct {
 	Sell float64 `json:"sell,string"`
 }
 
-func (e *Okex) GetTicker(from, to string) (*entity.Ticker, error) {
-	currencyPair := entity.Pair{
-		First:  entity.NewCurrency(from),
-		Second: entity.NewCurrency(to),
+func (e *Okex) GetTicker(from, to string) (*cryptomarkets.Ticker, error) {
+	currencyPair := cryptomarkets.Pair{
+		First:  cryptomarkets.NewCurrency(from),
+		Second: cryptomarkets.NewCurrency(to),
 	}
 
 	url := fmt.Sprintf("https://www.okcoin.com/api/v1/ticker.do?symbol=%s", currencyPair.Lower("_"))
 
-	body, err := common.Get(url, map[string]string{"Content-Type": "application/x-www-form-urlencoded"})
+	body, err := internal.Get(url, map[string]string{"Content-Type": "application/x-www-form-urlencoded"})
 	if err != nil {
 		return nil, fmt.Errorf("bad HTTP response: %q", err.Error())
 	}
@@ -48,7 +48,7 @@ func (e *Okex) GetTicker(from, to string) (*entity.Ticker, error) {
 		return nil, fmt.Errorf("okcoin error code: %d", resp.ErrorCode)
 	}
 
-	return &entity.Ticker{
+	return &cryptomarkets.Ticker{
 		Timestamp:     resp.Date,
 		LastPrice:     resp.Ticker.Last,
 		LastQuantity:  0,
@@ -69,6 +69,6 @@ func (e *Okex) GetTicker(from, to string) (*entity.Ticker, error) {
 	}, nil
 }
 
-func (e *Okex) OrderBook(from, to string) (*entity.OrderBook, error) {
+func (e *Okex) OrderBook(from, to string) (*cryptomarkets.OrderBook, error) {
 	return nil, errors.New("unimplemented")
 }

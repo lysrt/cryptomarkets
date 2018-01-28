@@ -8,7 +8,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/lysrt/cryptomarkets/common"
+	"github.com/lysrt/cryptomarkets/internal"
 )
 
 type orderType string
@@ -84,7 +84,7 @@ func (e *Okex) MarketOrder(from, to string, side Side, amount float64) (int, err
 		return 0, errors.New("unknown okex OrderMarket side")
 	}
 
-	body, err := common.Post(urlString, e.getSignedValues(values))
+	body, err := internal.Post(urlString, e.getSignedValues(values))
 	if err != nil {
 		return 0, err
 	}

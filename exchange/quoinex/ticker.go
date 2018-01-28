@@ -5,8 +5,8 @@ import (
 	"errors"
 	"time"
 
-	"github.com/lysrt/cryptomarkets/common"
-	"github.com/lysrt/cryptomarkets/entity"
+	"github.com/lysrt/cryptomarkets"
+	"github.com/lysrt/cryptomarkets/internal"
 )
 
 type quoinexTicker struct {
@@ -25,40 +25,15 @@ type quoinexTicker struct {
 	BaseCurrency       string      `json:"base_currency"`
 }
 
-func (e *Quoinex) GetTicker(from, to string) (*entity.Ticker, error) {
-	currencyPair := entity.Pair{
-		First:  entity.NewCurrency(from),
-		Second: entity.NewCurrency(to),
+func (e *Quoinex) GetTicker(from, to string) (*cryptomarkets.Ticker, error) {
+	currencyPair := cryptomarkets.Pair{
+		First:  cryptomarkets.NewCurrency(from),
+		Second: cryptomarkets.NewCurrency(to),
 	}
 
 	url := "https://api.quoine.com/products"
 
-	body, err := common.Get(url, nil)
-	if err != nil {
-		return nil, err
-	}
-
-	var tickers []quoinexTicker
-	err = json.Unmarshal(body, &tickers)
-	if err != nil {
-		return nil, err
-	}
-
-	id := ""
-	for _, t := range tickers {
-		if t.CurrencyPairCode == currencyPair.Upper("") {
-			id = t.ID
-			break
-		}
-	}
-	if id == "" {
-		return nil, errors.New("did not find currency pair")
-	}
-
-	// ---------------------
-	url = "https://api.quoine.com/products/" + id
-
-	body, err = common.Get(url, nil)
+	body, err := internal.Get(url, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -78,7 +53,7 @@ func (e *Quoinex) GetTicker(from, to string) (*entity.Ticker, error) {
 		return nil, err
 	}
 
-	return &entity.Ticker{
+	return &cryptomarkets.Ticker{
 		Timestamp:     time.Now().Unix(),
 		LastPrice:     last,
 		LastQuantity:  quantity,
@@ -99,6 +74,6 @@ func (e *Quoinex) GetTicker(from, to string) (*entity.Ticker, error) {
 	}, nil
 }
 
-func (e *Quoinex) OrderBook(from, to string) (*entity.OrderBook, error) {
+func (e *Quoinex) OrderBook(from, to string) (*cryptomarkets.OrderBook, error) {
 	return nil, errors.New("unimplemented")
 }

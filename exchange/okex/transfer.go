@@ -8,7 +8,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/lysrt/cryptomarkets/common"
+	"github.com/lysrt/cryptomarkets/internal"
 )
 
 func (e *Okex) DepositAddress(currency string) (string, error) {
@@ -51,7 +51,7 @@ func (e *Okex) Withdrawal(currency, destination string, amount float64) (int, er
 		// "target":           {outerAddress}, // Not mandatory
 	}
 
-	body, err := common.Post(urlString, e.getSignedValues(values))
+	body, err := internal.Post(urlString, e.getSignedValues(values))
 	if err != nil {
 		return 0, err
 	}

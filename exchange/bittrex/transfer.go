@@ -4,11 +4,11 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/lysrt/cryptomarkets/entity"
+	"github.com/lysrt/cryptomarkets"
 )
 
 func (e *Bittrex) DepositAddress(currency string) (string, error) {
-	ccy := entity.NewCurrency(currency)
+	ccy := cryptomarkets.NewCurrency(currency)
 	switch ccy.Upper() {
 	case "BTC":
 		return e.bitcoinDepositAddress()

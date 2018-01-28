@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"net/url"
 
-	"github.com/lysrt/cryptomarkets/common"
-	"github.com/lysrt/cryptomarkets/entity"
+	"github.com/lysrt/cryptomarkets"
+	"github.com/lysrt/cryptomarkets/internal"
 )
 
 type okexBalanceResponse struct {
@@ -176,11 +176,11 @@ type okexBalanceEntry struct {
 	SWFTC  float64 `json:"swftc,string"`
 }
 
-func (e *Okex) GetBalance() (*entity.Balance, error) {
+func (e *Okex) GetBalance() (*cryptomarkets.Balance, error) {
 	urlString := "https://www.okex.com/api/v1/userinfo.do"
 	// urlString := "https://www.okcoin.com/api/v1/userinfo.do"
 
-	body, err := common.Post(urlString, e.getSignedValues(url.Values{}))
+	body, err := internal.Post(urlString, e.getSignedValues(url.Values{}))
 	if err != nil {
 		return nil, fmt.Errorf("bad HTTP response: %q", err.Error())
 	}
@@ -196,7 +196,7 @@ func (e *Okex) GetBalance() (*entity.Balance, error) {
 		return nil, fmt.Errorf("okcoin API error code: %d", resp.ErrorCode)
 	}
 
-	balances := entity.Balance{
+	balances := cryptomarkets.Balance{
 		"BTC": resp.Info.Funds.Free.BTC,
 		"BCC": resp.Info.Funds.Free.BCC,
 		"BCH": resp.Info.Funds.Free.BCH,

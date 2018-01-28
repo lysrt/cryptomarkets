@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/lysrt/cryptomarkets/common"
-	"github.com/lysrt/cryptomarkets/entity"
+	"github.com/lysrt/cryptomarkets"
+	"github.com/lysrt/cryptomarkets/internal"
 )
 
 type bittrexResponse struct {
@@ -53,15 +53,15 @@ func (bt *bittrexTime) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-func (e *Bittrex) GetTicker(from, to string) (*entity.Ticker, error) {
-	currencyPair := entity.Pair{
-		First:  entity.NewCurrency(from),
-		Second: entity.NewCurrency(to),
+func (e *Bittrex) GetTicker(from, to string) (*cryptomarkets.Ticker, error) {
+	currencyPair := cryptomarkets.Pair{
+		First:  cryptomarkets.NewCurrency(from),
+		Second: cryptomarkets.NewCurrency(to),
 	}
 
 	url := fmt.Sprintf("https://bittrex.com/api/v1.1/public/getmarketsummary?market=%s", currencyPair.Lower("-"))
 
-	body, err := common.Get(url, nil)
+	body, err := internal.Get(url, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -88,7 +88,7 @@ func (e *Bittrex) GetTicker(from, to string) (*entity.Ticker, error) {
 	// t.OpenBuyOrders
 	// t.OpenSellOrders
 
-	return &entity.Ticker{
+	return &cryptomarkets.Ticker{
 		Timestamp:     time.Time(t.TimeStamp).Unix(),
 		LastPrice:     t.Last,
 		LastQuantity:  0,
@@ -111,6 +111,6 @@ func (e *Bittrex) GetTicker(from, to string) (*entity.Ticker, error) {
 
 // TODO Could use "getAllMarkets"
 
-func (e *Bittrex) OrderBook(from, to string) (*entity.OrderBook, error) {
+func (e *Bittrex) OrderBook(from, to string) (*cryptomarkets.OrderBook, error) {
 	return nil, errors.New("unimplemented")
 }

@@ -5,7 +5,7 @@ import (
 	"log"
 	"sync"
 
-	"github.com/lysrt/cryptomarkets/entity"
+	"github.com/lysrt/cryptomarkets"
 	"github.com/lysrt/cryptomarkets/exchange/binance"
 	"github.com/lysrt/cryptomarkets/exchange/bitstamp"
 	"github.com/lysrt/cryptomarkets/exchange/bittrex"
@@ -15,7 +15,7 @@ import (
 )
 
 type pricer interface {
-	GetTicker(from, to string) (*entity.Ticker, error)
+	GetTicker(from, to string) (*cryptomarkets.Ticker, error)
 }
 
 func main() {

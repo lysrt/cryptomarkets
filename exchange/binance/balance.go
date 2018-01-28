@@ -7,7 +7,7 @@ import (
 	"net/url"
 	"time"
 
-	"github.com/lysrt/cryptomarkets/entity"
+	"github.com/lysrt/cryptomarkets"
 )
 
 var urlString = "https://api.binance.com/api/v3/account"
@@ -27,7 +27,7 @@ type account struct {
 	} `json:"balances"`
 }
 
-func (e *Binance) GetBalance() (*entity.Balance, error) {
+func (e *Binance) GetBalance() (*cryptomarkets.Balance, error) {
 	// timestamp is mandatory when signing requests
 	timestamp := fmt.Sprintf("%d000", time.Now().Unix()) // Need milliseconds
 	values := url.Values{
@@ -59,7 +59,7 @@ func (e *Binance) GetBalance() (*entity.Balance, error) {
 		}
 	}
 
-	balances := make(entity.Balance)
+	balances := make(cryptomarkets.Balance)
 	balances["BTC"] = btcBalance
 
 	return &balances, nil
