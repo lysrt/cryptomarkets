@@ -2,8 +2,8 @@ package okex
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
+	"time"
 
 	"github.com/lysrt/cryptomarkets"
 	"github.com/lysrt/cryptomarkets/internal"
@@ -69,6 +69,51 @@ func (e *Okex) GetTicker(from, to string) (*cryptomarkets.Ticker, error) {
 	}, nil
 }
 
+type okexOrderBook struct {
+	Bids [][]float64 `json:"bids"`
+	Asks [][]float64 `json:"asks"`
+}
+
 func (e *Okex) OrderBook(from, to string) (*cryptomarkets.OrderBook, error) {
-	return nil, errors.New("unimplemented")
+	currencyPair := cryptomarkets.Pair{
+		First:  cryptomarkets.NewCurrency(from),
+		Second: cryptomarkets.NewCurrency(to),
+	}
+
+	// ignore the size param [1-200]
+	url := fmt.Sprintf("https://www.okex.com/api/v1/depth.do?symbol=%s", currencyPair.Lower("_"))
+
+	body, err := internal.Get(url, nil)
+	if err != nil {
+		return nil, fmt.Errorf("bad HTTP response: %q", err.Error())
+	}
+
+	var o okexOrderBook
+
+	err = json.Unmarshal(body, &o)
+	if err != nil {
+		return nil, err
+	}
+
+	bids := []cryptomarkets.Order{}
+	for _, b := range o.Bids {
+		bids = append(bids, cryptomarkets.Order{
+			Price:    b[0],
+			Quantity: b[1],
+		})
+	}
+
+	asks := []cryptomarkets.Order{}
+	for _, a := range o.Asks {
+		asks = append(asks, cryptomarkets.Order{
+			Price:    a[0],
+			Quantity: a[1],
+		})
+	}
+
+	return &cryptomarkets.OrderBook{
+		Timestamp: time.Now().Unix(),
+		Asks:      asks,
+		Bids:      bids,
+	}, nil
 }
