@@ -2,8 +2,8 @@ package binance
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
+	"strconv"
 	"time"
 
 	"github.com/lysrt/cryptomarkets"
@@ -99,6 +99,95 @@ func (e *Binance) PrintAllPrices() error {
 	return nil
 }
 
+type binanceOrderBook struct {
+	LastUpdateId int             `json:"lastUpdateId"`
+	Bids         [][]interface{} `json:"bids"`
+	Asks         [][]interface{} `json:"asks"`
+}
+
+/*
+{
+	"lastUpdateId": 50325974,
+	"bids": [
+	  [
+		"10481.64000000",
+		"0.26734600",
+		[]
+	  ],
+	  ...
+	],
+	"asks": [
+	  [
+		"10489.71000000",
+		"0.15654600",
+		[]
+	  ],
+	  ...
+	]
+  }
+*/
 func (e *Binance) OrderBook(from, to string) (*cryptomarkets.OrderBook, error) {
-	return nil, errors.New("unimplemented")
+	currencyPair := cryptomarkets.Pair{
+		First:  cryptomarkets.NewCurrency(from),
+		Second: cryptomarkets.NewCurrency(to),
+	}
+
+	// ignore the limit param, Default 100; max 1000. Valid limits:[5, 10, 20, 50, 100, 500, 1000]
+	url := fmt.Sprintf("https://api.binance.com/api/v1/depth?symbol=%s", currencyPair.Upper(""))
+
+	body, err := internal.Get(url, nil)
+	if err != nil {
+		return nil, fmt.Errorf("bad HTTP response: %q", err.Error())
+	}
+
+	var o binanceOrderBook
+
+	err = json.Unmarshal(body, &o)
+	if err != nil {
+		return nil, err
+	}
+
+	bids := []cryptomarkets.Order{}
+	for _, b := range o.Bids {
+		priceStr := b[0].(string)
+		qtyStr := b[1].(string)
+
+		price, err := strconv.ParseFloat(priceStr, 64)
+		if err != nil {
+			return nil, err
+		}
+		quantity, err := strconv.ParseFloat(qtyStr, 64)
+		if err != nil {
+			return nil, err
+		}
+		bids = append(bids, cryptomarkets.Order{
+			Price:    price,
+			Quantity: quantity,
+		})
+	}
+
+	asks := []cryptomarkets.Order{}
+	for _, a := range o.Asks {
+		priceStr := a[0].(string)
+		qtyStr := a[1].(string)
+
+		price, err := strconv.ParseFloat(priceStr, 64)
+		if err != nil {
+			return nil, err
+		}
+		quantity, err := strconv.ParseFloat(qtyStr, 64)
+		if err != nil {
+			return nil, err
+		}
+		asks = append(asks, cryptomarkets.Order{
+			Price:    price,
+			Quantity: quantity,
+		})
+	}
+
+	return &cryptomarkets.OrderBook{
+		Timestamp: time.Now().Unix(),
+		Asks:      asks,
+		Bids:      bids,
+	}, nil
 }
