@@ -30,7 +30,7 @@ func (e *Okex) GetTicker(from, to string) (*cryptomarkets.Ticker, error) {
 		Second: cryptomarkets.NewCurrency(to),
 	}
 
-	url := fmt.Sprintf("https://www.okcoin.com/api/v1/ticker.do?symbol=%s", currencyPair.Lower("_"))
+	url := fmt.Sprintf("https://www.okex.com/api/v1/ticker.do?symbol=%s", currencyPair.Lower("_"))
 
 	body, err := internal.Get(url, map[string]string{"Content-Type": "application/x-www-form-urlencoded"})
 	if err != nil {
