@@ -63,7 +63,7 @@ func (e *Okex) Withdrawal(currency, destination string, amount float64) (int, er
 	}
 
 	if resp.Result == false {
-		return 0, fmt.Errorf("okcoin API error (%d): %s", resp.ErrorCode, errorCodes[resp.ErrorCode])
+		return 0, fmt.Errorf("okex API error (%d): %s", resp.ErrorCode, errorCodes[resp.ErrorCode])
 	}
 
 	return resp.WithdrawID, nil

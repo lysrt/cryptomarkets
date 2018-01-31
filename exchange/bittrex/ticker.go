@@ -2,7 +2,6 @@ package bittrex
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	"time"
 
@@ -10,7 +9,7 @@ import (
 	"github.com/lysrt/cryptomarkets/internal"
 )
 
-type bittrexResponse struct {
+type bittrexTickerResponse struct {
 	Success bool            `json:"success"`
 	Message string          `json:"message"`
 	Result  []bittrexTicker `json:"result"`
@@ -66,7 +65,7 @@ func (e *Bittrex) GetTicker(from, to string) (*cryptomarkets.Ticker, error) {
 		return nil, err
 	}
 
-	var r bittrexResponse
+	var r bittrexTickerResponse
 	err = json.Unmarshal(body, &r)
 	if err != nil {
 		return nil, err
@@ -111,6 +110,65 @@ func (e *Bittrex) GetTicker(from, to string) (*cryptomarkets.Ticker, error) {
 
 // TODO Could use "getAllMarkets"
 
+type bittrexOrderBookResponse struct {
+	Success bool             `json:"success"`
+	Message string           `json:"message"`
+	Result  bittrexOrderBook `json:"result"`
+}
+
+type bittrexOrderBook struct {
+	Buy  []bittrexOrder `json:"buy"`
+	Sell []bittrexOrder `json:"sell"`
+}
+
+type bittrexOrder struct {
+	Quantity float64 `json:"Quantity"`
+	Rate     float64 `json:"Rate"`
+}
+
 func (e *Bittrex) OrderBook(from, to string) (*cryptomarkets.OrderBook, error) {
-	return nil, errors.New("unimplemented")
+	currencyPair := cryptomarkets.Pair{
+		First:  cryptomarkets.NewCurrency(from),
+		Second: cryptomarkets.NewCurrency(to),
+	}
+
+	url := fmt.Sprintf("https://bittrex.com/api/v1.1/public/getorderbook?market=%s&type=both", currencyPair.Lower("-"))
+
+	body, err := internal.Get(url, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	var r bittrexOrderBookResponse
+	err = json.Unmarshal(body, &r)
+	if err != nil {
+		return nil, err
+	}
+
+	if r.Success == false {
+		// TODO Put currency pair in the message?
+		return nil, fmt.Errorf("bad API response: %s", r.Message)
+	}
+
+	bids := []cryptomarkets.Order{}
+	for _, b := range r.Result.Buy {
+		bids = append(bids, cryptomarkets.Order{
+			Price:    b.Rate,
+			Quantity: b.Quantity,
+		})
+	}
+
+	asks := []cryptomarkets.Order{}
+	for _, a := range r.Result.Sell {
+		asks = append(asks, cryptomarkets.Order{
+			Price:    a.Rate,
+			Quantity: a.Quantity,
+		})
+	}
+
+	return &cryptomarkets.OrderBook{
+		Timestamp: time.Now().Unix(),
+		Asks:      asks,
+		Bids:      bids,
+	}, nil
 }

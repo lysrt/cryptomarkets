@@ -12,7 +12,7 @@ import (
 type okexTickerResponse struct {
 	Date      int64      `json:"date,string"`
 	Ticker    okexTicker `json:"ticker"`
-	ErrorCode int64      `json:"error_code"`
+	ErrorCode int        `json:"error_code"`
 }
 
 type okexTicker struct {
@@ -45,7 +45,7 @@ func (e *Okex) GetTicker(from, to string) (*cryptomarkets.Ticker, error) {
 	}
 
 	if resp.ErrorCode != 0 {
-		return nil, fmt.Errorf("okcoin error code: %d", resp.ErrorCode)
+		return nil, fmt.Errorf("okex API error (%d): %s", resp.ErrorCode, errorCodes[resp.ErrorCode])
 	}
 
 	return &cryptomarkets.Ticker{
