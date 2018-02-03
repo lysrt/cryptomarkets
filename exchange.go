@@ -47,6 +47,13 @@ type Order struct {
 	Quantity float64
 }
 
+type OrderType string
+
+const (
+	Limit  OrderType = "limit"
+	Market OrderType = "market"
+)
+
 // Balance holds the list of the user balances on an exchange
 type Balance map[Currency]float64
 
