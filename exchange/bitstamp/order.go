@@ -94,3 +94,66 @@ func (e *Bitstamp) SellMarket(from, to string, amount float64) (int, error) {
 
 	return 0, nil
 }
+
+func (e *Bitstamp) OrderStatus(orderID int) error {
+	urlString := "https://www.bitstamp.net/api/order_status/"
+
+	values := e.getAuthValues()
+	values.Add("id", strconv.Itoa(orderID))
+	body, err := internal.Post(urlString, values)
+	if err != nil {
+		return err
+	}
+
+	err = e.checkResponse(body)
+	if err != nil {
+		return fmt.Errorf("order status error: %q", err)
+	}
+
+	fmt.Println("orderStatus: ", string(body))
+
+	return nil
+}
+
+func (e *Bitstamp) CancelOrder(orderID int) error {
+	urlString := "https://www.bitstamp.net/api/v2/cancel_order/"
+
+	values := e.getAuthValues()
+	values.Add("id", strconv.Itoa(orderID))
+	body, err := internal.Post(urlString, values)
+	if err != nil {
+		return err
+	}
+
+	err = e.checkResponse(body)
+	if err != nil {
+		return fmt.Errorf("cancel order error: %q", err)
+	}
+
+	fmt.Println("cancellOrder: ", string(body))
+
+	return nil
+}
+
+func (e *Bitstamp) CancelAllOrders() error {
+	urlString := "https://www.bitstamp.net/api/cancel_all_orders/"
+
+	values := e.getAuthValues()
+	body, err := internal.Post(urlString, values)
+	if err != nil {
+		return err
+	}
+
+	err = e.checkResponse(body)
+	if err != nil {
+		return fmt.Errorf("cancel all orders error: %q", err)
+	}
+
+	fmt.Println("cancellAllOrders: ", string(body))
+
+	return nil
+}
+
+func (e *Bitstamp) ListOrders() {
+
+}
