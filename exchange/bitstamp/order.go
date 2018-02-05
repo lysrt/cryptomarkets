@@ -1,6 +1,7 @@
 package bitstamp
 
 import (
+	"errors"
 	"fmt"
 	"strconv"
 
@@ -30,26 +31,6 @@ func (e *Bitstamp) BuyLimit(from, to string, amount, price float64) (int, error)
 	return 0, nil
 }
 
-func (e *Bitstamp) BuyMarket(from, to string, amount float64) (int, error) {
-	pair := cryptomarkets.Pair{
-		First:  cryptomarkets.NewCurrency(from),
-		Second: cryptomarkets.NewCurrency(to),
-	}
-	urlString := "https://www.bitstamp.net/api/v2/buy/market/%s/"
-	urlString = fmt.Sprintf(urlString, pair.Lower(""))
-
-	values := e.getAuthValues()
-	values.Add("amount", strconv.FormatFloat(amount, 'f', -1, 64))
-	body, err := internal.Post(urlString, values)
-	if err != nil {
-		return 0, err
-	}
-
-	fmt.Println("body", string(body))
-
-	return 0, nil
-}
-
 func (e *Bitstamp) SellLimit(from, to string, amount, price float64) (int, error) {
 	pair := cryptomarkets.Pair{
 		First:  cryptomarkets.NewCurrency(from),
@@ -61,6 +42,26 @@ func (e *Bitstamp) SellLimit(from, to string, amount, price float64) (int, error
 	values := e.getAuthValues()
 	values.Add("amount", strconv.FormatFloat(amount, 'f', -1, 64))
 	values.Add("price", strconv.FormatFloat(price, 'f', -1, 64))
+	body, err := internal.Post(urlString, values)
+	if err != nil {
+		return 0, err
+	}
+
+	fmt.Println("body", string(body))
+
+	return 0, nil
+}
+
+func (e *Bitstamp) BuyMarket(from, to string, amount float64) (int, error) {
+	pair := cryptomarkets.Pair{
+		First:  cryptomarkets.NewCurrency(from),
+		Second: cryptomarkets.NewCurrency(to),
+	}
+	urlString := "https://www.bitstamp.net/api/v2/buy/market/%s/"
+	urlString = fmt.Sprintf(urlString, pair.Lower(""))
+
+	values := e.getAuthValues()
+	values.Add("amount", strconv.FormatFloat(amount, 'f', -1, 64))
 	body, err := internal.Post(urlString, values)
 	if err != nil {
 		return 0, err
@@ -95,24 +96,26 @@ func (e *Bitstamp) SellMarket(from, to string, amount float64) (int, error) {
 	return 0, nil
 }
 
-func (e *Bitstamp) OrderStatus(orderID int) error {
+func (e *Bitstamp) OrderStatus(orderID int) (cryptomarkets.Order, error) {
+	var order cryptomarkets.Order
+
 	urlString := "https://www.bitstamp.net/api/order_status/"
 
 	values := e.getAuthValues()
 	values.Add("id", strconv.Itoa(orderID))
 	body, err := internal.Post(urlString, values)
 	if err != nil {
-		return err
+		return order, err
 	}
 
 	err = e.checkResponse(body)
 	if err != nil {
-		return fmt.Errorf("order status error: %q", err)
+		return order, fmt.Errorf("order status error: %q", err)
 	}
 
 	fmt.Println("orderStatus: ", string(body))
 
-	return nil
+	return order, nil
 }
 
 func (e *Bitstamp) CancelOrder(orderID int) error {
@@ -154,6 +157,6 @@ func (e *Bitstamp) CancelAllOrders() error {
 	return nil
 }
 
-func (e *Bitstamp) ListOrders() {
-
+func (e *Bitstamp) ListOrders() ([]cryptomarkets.Order, error) {
+	return nil, errors.New("unimplemented")
 }

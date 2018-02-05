@@ -178,7 +178,6 @@ type okexBalanceEntry struct {
 
 func (e *Okex) GetBalance() (*cryptomarkets.Balance, error) {
 	urlString := "https://www.okex.com/api/v1/userinfo.do"
-	// urlString := "https://www.okcoin.com/api/v1/userinfo.do"
 
 	body, err := internal.Post(urlString, e.getSignedValues(url.Values{}))
 	if err != nil {
@@ -193,7 +192,7 @@ func (e *Okex) GetBalance() (*cryptomarkets.Balance, error) {
 	}
 
 	if resp.ErrorCode != 0 {
-		return nil, fmt.Errorf("okcoin API error code: %d", resp.ErrorCode)
+		return nil, fmt.Errorf("okex API error (%d): %s", resp.ErrorCode, errorCodes[resp.ErrorCode])
 	}
 
 	balances := cryptomarkets.Balance{

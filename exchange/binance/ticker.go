@@ -147,7 +147,7 @@ func (e *Binance) OrderBook(from, to string) (*cryptomarkets.OrderBook, error) {
 		return nil, err
 	}
 
-	bids := []cryptomarkets.Order{}
+	bids := []cryptomarkets.BookOrder{}
 	for _, b := range o.Bids {
 		priceStr := b[0].(string)
 		qtyStr := b[1].(string)
@@ -160,13 +160,13 @@ func (e *Binance) OrderBook(from, to string) (*cryptomarkets.OrderBook, error) {
 		if err != nil {
 			return nil, err
 		}
-		bids = append(bids, cryptomarkets.Order{
+		bids = append(bids, cryptomarkets.BookOrder{
 			Price:    price,
 			Quantity: quantity,
 		})
 	}
 
-	asks := []cryptomarkets.Order{}
+	asks := []cryptomarkets.BookOrder{}
 	for _, a := range o.Asks {
 		priceStr := a[0].(string)
 		qtyStr := a[1].(string)
@@ -179,7 +179,7 @@ func (e *Binance) OrderBook(from, to string) (*cryptomarkets.OrderBook, error) {
 		if err != nil {
 			return nil, err
 		}
-		asks = append(asks, cryptomarkets.Order{
+		asks = append(asks, cryptomarkets.BookOrder{
 			Price:    price,
 			Quantity: quantity,
 		})

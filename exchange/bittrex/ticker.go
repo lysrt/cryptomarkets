@@ -150,17 +150,17 @@ func (e *Bittrex) OrderBook(from, to string) (*cryptomarkets.OrderBook, error) {
 		return nil, fmt.Errorf("bad API response: %s", r.Message)
 	}
 
-	bids := []cryptomarkets.Order{}
+	bids := []cryptomarkets.BookOrder{}
 	for _, b := range r.Result.Buy {
-		bids = append(bids, cryptomarkets.Order{
+		bids = append(bids, cryptomarkets.BookOrder{
 			Price:    b.Rate,
 			Quantity: b.Quantity,
 		})
 	}
 
-	asks := []cryptomarkets.Order{}
+	asks := []cryptomarkets.BookOrder{}
 	for _, a := range r.Result.Sell {
-		asks = append(asks, cryptomarkets.Order{
+		asks = append(asks, cryptomarkets.BookOrder{
 			Price:    a.Rate,
 			Quantity: a.Quantity,
 		})

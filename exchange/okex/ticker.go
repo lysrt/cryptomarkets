@@ -95,17 +95,17 @@ func (e *Okex) OrderBook(from, to string) (*cryptomarkets.OrderBook, error) {
 		return nil, err
 	}
 
-	bids := []cryptomarkets.Order{}
+	bids := []cryptomarkets.BookOrder{}
 	for _, b := range o.Bids {
-		bids = append(bids, cryptomarkets.Order{
+		bids = append(bids, cryptomarkets.BookOrder{
 			Price:    b[0],
 			Quantity: b[1],
 		})
 	}
 
-	asks := []cryptomarkets.Order{}
+	asks := []cryptomarkets.BookOrder{}
 	for _, a := range o.Asks {
-		asks = append(asks, cryptomarkets.Order{
+		asks = append(asks, cryptomarkets.BookOrder{
 			Price:    a[0],
 			Quantity: a[1],
 		})

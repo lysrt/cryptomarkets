@@ -101,7 +101,7 @@ func (e *Bitstamp) OrderBook(from, to string) (*cryptomarkets.OrderBook, error) 
 		return nil, err
 	}
 
-	bids := []cryptomarkets.Order{}
+	bids := []cryptomarkets.BookOrder{}
 	for _, b := range o.Bids {
 		price, err := strconv.ParseFloat(b[0], 64)
 		if err != nil {
@@ -111,13 +111,13 @@ func (e *Bitstamp) OrderBook(from, to string) (*cryptomarkets.OrderBook, error) 
 		if err != nil {
 			return nil, err
 		}
-		bids = append(bids, cryptomarkets.Order{
+		bids = append(bids, cryptomarkets.BookOrder{
 			Price:    price,
 			Quantity: quantity,
 		})
 	}
 
-	asks := []cryptomarkets.Order{}
+	asks := []cryptomarkets.BookOrder{}
 	for _, a := range o.Asks {
 		price, err := strconv.ParseFloat(a[0], 64)
 		if err != nil {
@@ -127,7 +127,7 @@ func (e *Bitstamp) OrderBook(from, to string) (*cryptomarkets.OrderBook, error) 
 		if err != nil {
 			return nil, err
 		}
-		asks = append(asks, cryptomarkets.Order{
+		asks = append(asks, cryptomarkets.BookOrder{
 			Price:    price,
 			Quantity: quantity,
 		})

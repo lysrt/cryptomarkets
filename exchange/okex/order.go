@@ -8,6 +8,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/lysrt/cryptomarkets"
 	"github.com/lysrt/cryptomarkets/internal"
 )
 
@@ -49,7 +50,23 @@ type okexOrderResponse struct {
 	OrderID int  `json:"order_id"`
 }
 
-func (e *Okex) MarketOrder(from, to string, side Side, amount float64) (int, error) {
+func (e *Okex) BuyLimit(from, to string, amount, price float64) (int, error) {
+	return 0, errors.New("unimplemented")
+}
+
+func (e *Okex) SellLimit(from, to string, amount, price float64) (int, error) {
+	return 0, errors.New("unimplemented")
+}
+
+func (e *Okex) BuyMarket(from, to string, amount float64) (int, error) {
+	return e.marketOrder(from, to, Buy, amount)
+}
+
+func (e *Okex) SellMarket(from, to string, amount float64) (int, error) {
+	return e.marketOrder(from, to, Sell, amount)
+}
+
+func (e *Okex) marketOrder(from, to string, side Side, amount float64) (int, error) {
 	urlString := "https://www.okcoin.com/api/v1/trade.do"
 
 	fromCurrency := okexSymbol(from)
@@ -99,4 +116,20 @@ func (e *Okex) MarketOrder(from, to string, side Side, amount float64) (int, err
 	fmt.Println("resp:", resp)
 
 	return resp.OrderID, nil
+}
+
+func (e *Okex) OrderStatus(orderID int) (cryptomarkets.Order, error) {
+	return cryptomarkets.Order{}, errors.New("unimplemented")
+}
+
+func (e *Okex) CancelOrder(orderID int) error {
+	return errors.New("unimplemented")
+}
+
+func (e *Okex) CancelAllOrders() error {
+	return errors.New("unimplemented")
+}
+
+func (e *Okex) ListOrders() ([]cryptomarkets.Order, error) {
+	return nil, errors.New("unimplemented")
 }

@@ -8,9 +8,21 @@ import (
 type Exchange interface {
 	GetTicker(from, to string) (*Ticker, error)
 	OrderBook(from, to string) (*OrderBook, error)
+
 	GetBalance() (*Balance, error)
+
 	DepositAddress(currency string) (string, error)
 	Withdrawal(currency, destination string, amount float64) (int, error)
+
+	BuyLimit(from, to string, amount, price float64) (int, error)
+	SellLimit(from, to string, amount, price float64) (int, error)
+	BuyMarket(from, to string, amount float64) (int, error)
+	SellMarket(from, to string, amount float64) (int, error)
+
+	OrderStatus(orderID int) (Order, error)
+	CancelOrder(orderID int) error
+	CancelAllOrders() error
+	ListOrders() ([]Order, error)
 }
 
 // Ticker holds the common ticker information of an exchange price
@@ -37,12 +49,12 @@ type Ticker struct {
 // OrderBook holds the open orders of an exchange
 type OrderBook struct {
 	Timestamp int64
-	Asks      []Order
-	Bids      []Order
+	Asks      []BookOrder
+	Bids      []BookOrder
 }
 
 // Order represents en entry int the order book
-type Order struct {
+type BookOrder struct {
 	Price    float64
 	Quantity float64
 }
@@ -53,6 +65,22 @@ const (
 	Limit  OrderType = "limit"
 	Market OrderType = "market"
 )
+
+type OrderStatus string
+
+const (
+	Open  OrderStatus = "open"
+	Close OrderStatus = "close"
+)
+
+type Order struct {
+	ID     int
+	Pair   Pair
+	Amount float64
+	Price  float64
+	Type   OrderType
+	Status OrderStatus
+}
 
 // Balance holds the list of the user balances on an exchange
 type Balance map[Currency]float64
