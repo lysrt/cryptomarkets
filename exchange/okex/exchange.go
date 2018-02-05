@@ -1,9 +1,9 @@
 package okex
 
 type Okex struct {
-	CustomerID string
 	ApiKey     string
 	Secret     string
+	CustomerID string
 	private    bool
 }
 
