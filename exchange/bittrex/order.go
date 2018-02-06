@@ -26,7 +26,7 @@ func (e *Bittrex) OrderStatus(orderID int) (cryptomarkets.Order, error) {
 	return cryptomarkets.Order{}, errors.New("unimplemented")
 }
 
-func (e *Bittrex) CancelOrder(orderID int) error {
+func (e *Bittrex) CancelOrder(orderID int, from, to string) error {
 	return errors.New("unimplemented")
 }
 

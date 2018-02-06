@@ -20,7 +20,7 @@ type Exchange interface {
 	SellMarket(from, to string, amount float64) (int, error)
 
 	OrderStatus(orderID int) (Order, error)
-	CancelOrder(orderID int) error
+	CancelOrder(orderID int, from, to string) error
 	CancelAllOrders() error
 	ListOrders() ([]Order, error)
 }
@@ -74,12 +74,15 @@ const (
 )
 
 type Order struct {
-	ID     int
-	Pair   Pair
-	Amount float64
-	Price  float64
-	Type   OrderType
-	Status OrderStatus
+	ID           int
+	Pair         Pair
+	Amount       float64
+	Price        float64
+	Type         OrderType
+	Status       OrderStatus
+	CreationTime int
+	AveragePrice float64
+	DealAmount   float64
 }
 
 // Balance holds the list of the user balances on an exchange

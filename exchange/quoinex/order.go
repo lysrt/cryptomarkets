@@ -26,7 +26,7 @@ func (e *Quoinex) OrderStatus(orderID int) (cryptomarkets.Order, error) {
 	return cryptomarkets.Order{}, errors.New("unimplemented")
 }
 
-func (e *Quoinex) CancelOrder(orderID int) error {
+func (e *Quoinex) CancelOrder(orderID int, from, to string) error {
 	return errors.New("unimplemented")
 }
 

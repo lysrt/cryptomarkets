@@ -26,7 +26,7 @@ func (e *Binance) OrderStatus(orderID int) (cryptomarkets.Order, error) {
 	return cryptomarkets.Order{}, errors.New("unimplemented")
 }
 
-func (e *Binance) CancelOrder(orderID int) error {
+func (e *Binance) CancelOrder(orderID int, from, to string) error {
 	return errors.New("unimplemented")
 }
 

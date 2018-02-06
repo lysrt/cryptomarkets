@@ -118,7 +118,7 @@ func (e *Bitstamp) OrderStatus(orderID int) (cryptomarkets.Order, error) {
 	return order, nil
 }
 
-func (e *Bitstamp) CancelOrder(orderID int) error {
+func (e *Bitstamp) CancelOrder(orderID int, from, to string) error {
 	urlString := "https://www.bitstamp.net/api/v2/cancel_order/"
 
 	values := e.getAuthValues()
