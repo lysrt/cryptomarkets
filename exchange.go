@@ -12,7 +12,7 @@ type Exchange interface {
 	GetBalance() (*Balance, error)
 
 	DepositAddress(currency string) (string, error)
-	Withdrawal(currency, destination string, amount float64) (int, error)
+	Withdrawal(currency, destination string, amount, fee float64) (int, error)
 
 	BuyLimit(from, to string, amount, price float64) (int, error)
 	SellLimit(from, to string, amount, price float64) (int, error)

@@ -103,7 +103,7 @@ func (e *Bitstamp) litecoinDepositAddress() (string, error) {
 	return address.Address, nil
 }
 
-func (e *Bitstamp) Withdrawal(currency, destination string, amount float64) (int, error) {
+func (e *Bitstamp) Withdrawal(currency, destination string, amount, fee float64) (int, error) {
 	ccy := cryptomarkets.NewCurrency(currency)
 	switch ccy.Upper() {
 	case "BTC":

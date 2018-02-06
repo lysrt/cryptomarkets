@@ -23,28 +23,31 @@ type okexWithdrawalResponse struct {
 	WithdrawID int  `json:"withdraw_id"`
 }
 
-func (e *Okex) Withdrawal(currency, destination string, amount float64) (int, error) {
+func (e *Okex) Withdrawal(currency, destination string, amount, fee float64) (int, error) {
 	urlString := "https://www.okex.com/api/v1/withdraw.do"
+	/*
+		var symbol string
+		switch strings.ToLower(currency) {
+		case "btc":
+			symbol = "btc_usd"
+		case "ltc":
+			symbol = "ltc_usd"
+		case "eth":
+			symbol = "eth_usd"
+		case "etc":
+			symbol = "etc_usd"
+		case "bch":
+			symbol = "bch_usd"
+		default:
+			return 0, fmt.Errorf("okex cannot withdraw %s, only: btc, ltc, eth, etc, bch", currency)
+		}
+	*/
 
-	var symbol string
-	switch strings.ToLower(currency) {
-	case "btc":
-		symbol = "btc_usd"
-	case "ltc":
-		symbol = "ltc_usd"
-	case "eth":
-		symbol = "eth_usd"
-	case "etc":
-		symbol = "etc_usd"
-	case "bch":
-		symbol = "bch_usd"
-	default:
-		return 0, fmt.Errorf("okex cannot withdraw %s, only: btc, ltc, eth, etc, bch", currency)
-	}
+	symbol := strings.ToLower(currency + "_usd")
 
 	values := url.Values{
 		"symbol":           {symbol},
-		"chargefee":        {"0.002"},
+		"chargefee":        {strconv.FormatFloat(fee, 'f', -1, 64)},
 		"trade_pwd":        {e.CustomerID},
 		"withdraw_address": {destination},
 		"withdraw_amount":  {strconv.FormatFloat(amount, 'f', -1, 64)},

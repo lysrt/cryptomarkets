@@ -21,7 +21,7 @@ func (e *Binance) bitcoinDepositAddress() (string, error) {
 	return "", errors.New("unimplemented")
 }
 
-func (q *Binance) Withdrawal(currency, destination string, amount float64) (int, error) {
+func (q *Binance) Withdrawal(currency, destination string, amount, fee float64) (int, error) {
 	return 0, errors.New("unimplemented")
 }
 
