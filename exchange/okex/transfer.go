@@ -12,19 +12,19 @@ import (
 )
 
 func (e *Okex) DepositAddress(currency string) (string, error) {
-	return "", errors.New("unavailable in okcoin, check deposit address in your account")
+	return "", errors.New("unavailable in okex, check deposit address in your account")
 }
 
 type targetType string
 
-type okcoinWithdrawalResponse struct {
+type okexWithdrawalResponse struct {
 	Result     bool `json:"result"`
 	ErrorCode  int  `json:"error_code"`
 	WithdrawID int  `json:"withdraw_id"`
 }
 
 func (e *Okex) Withdrawal(currency, destination string, amount float64) (int, error) {
-	urlString := "https://www.okcoin.com/api/v1/withdraw.do"
+	urlString := "https://www.okex.com/api/v1/withdraw.do"
 
 	var symbol string
 	switch strings.ToLower(currency) {
@@ -44,19 +44,19 @@ func (e *Okex) Withdrawal(currency, destination string, amount float64) (int, er
 
 	values := url.Values{
 		"symbol":           {symbol},
-		"chargefee":        {"0.01"}, //0.002
+		"chargefee":        {"0.002"},
 		"trade_pwd":        {e.CustomerID},
 		"withdraw_address": {destination},
 		"withdraw_amount":  {strconv.FormatFloat(amount, 'f', -1, 64)},
-		// "target":           {outerAddress}, // Not mandatory
+		// "target":           {"address"}, // Not mandatory
 	}
 
 	body, err := internal.Post(urlString, e.getSignedValues(values))
 	if err != nil {
-		return 0, err
+		return 0, fmt.Errorf("okex request error: %q", err)
 	}
 
-	var resp okcoinWithdrawalResponse
+	var resp okexWithdrawalResponse
 	err = json.Unmarshal(body, &resp)
 	if err != nil {
 		return 0, err

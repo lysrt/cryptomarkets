@@ -26,12 +26,12 @@ func Get(url string, headers map[string]string) ([]byte, error) {
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("%s", resp.Status)
+		return nil, fmt.Errorf("http get error: %s", resp.Status)
 	}
 
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("cannot read http get body: %q", err)
 	}
 
 	return body, nil
@@ -45,12 +45,12 @@ func Post(url string, values url.Values) ([]byte, error) {
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("%s", resp.Status)
+		return nil, fmt.Errorf("http post error: %s", resp.Status)
 	}
 
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("cannot read http post body: %q", err)
 	}
 
 	return body, nil
